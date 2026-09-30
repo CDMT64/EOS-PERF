@@ -6,11 +6,11 @@
 <meta name="theme-color" content="#12171f">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="EOS">
+<meta name="apple-mobile-web-app-title" content="PERFS">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="apple-touch-icon" sizes="512x512" href="icon-512.png">
-<title>EOS · Cougar AS532</title>
+<title>PERFS · Cougar AS532</title>
 <style>
 :root{
   --bg:#12171f; --panel:#1a212c; --panel2:#212a37; --line:#2c3746;
@@ -250,6 +250,7 @@ table.res tr.cols td{padding:0 0 4px;border-top:0;font-size:10.5px;color:var(--f
 .cbl .ro{text-align:right;font-size:15px;font-weight:600;padding-right:2px}
 .cbl.large{grid-template-columns:1fr 178px}
 .cbl .duo{display:grid;grid-template-columns:52px 12px 1fr;gap:6px;align-items:center}
+.cbl .duo .ro{font-size:15px}
 .cbl .duo .x{text-align:center;color:var(--faint);font-size:12px}
 .ctot{margin-top:12px;padding:11px 12px;background:hsl(var(--h) 30% 20%);
   border:1px solid hsl(var(--h) 26% 36%);border-radius:8px}
@@ -292,7 +293,7 @@ table.res tr.cols td{padding:0 0 4px;border-top:0;font-size:10.5px;color:var(--f
 </div>
 <script>
 const PLANCHES = {"FT10":{"-30":[[10750,9365],[11000,9276],[11250,9187],[11500,9099],[11750,9011],[11874,8957],[12000,8924],[12500,8751],[13000,8578],[13500,8402],[14000,8231],[14500,8065],[15000,7899],[15500,7733],[16000,7568],[16500,7410],[17000,7254],[17500,7098],[18000,6944],[18500,6793],[19000,6653],[19500,6509],[20000,6376],[20500,6242],[21000,6110],[21500,5983],[22000,5858],[22500,5733],[23000,5607],[23500,5487],[24000,5365],[24500,5242],[25000,5125],[25013,5124]],"-20":[[9750,9403],[10000,9314],[10250,9225],[10500,9136],[10750,9048],[10982,8956],[11000,8955],[11500,8787],[12000,8613],[12500,8442],[13000,8272],[13500,8101],[14000,7935],[14500,7773],[15000,7611],[15500,7451],[16000,7293],[16500,7139],[17000,6992],[17500,6842],[18000,6694],[18500,6551],[19000,6418],[19500,6283],[20000,6155],[20500,6027],[21000,5900],[21500,5779],[22000,5657],[22500,5535],[23000,5414],[23500,5297],[24000,5179],[24500,5058],[24760,5004]],"-10":[[9000,9326],[9250,9238],[9500,9151],[9750,9064],[10024,8954],[10500,8808],[11000,8635],[11500,8461],[12000,8295],[12500,8130],[13000,7962],[13500,7794],[14000,7631],[14500,7476],[15000,7318],[15500,7164],[16000,7012],[16500,6868],[17000,6723],[17500,6582],[18000,6446],[18500,6307],[19000,6182],[19500,6056],[20000,5933],[20500,5811],[21000,5688],[21500,5569],[22000,5449],[22500,5331],[23000,5214],[23500,5099],[23948,5002]],"0":[[7750,9395],[8000,9309],[8250,9223],[8500,9138],[8750,9052],[8986,8958],[9000,8956],[9500,8799],[10000,8633],[10500,8461],[11000,8291],[11500,8126],[12000,7964],[12500,7801],[13000,7640],[13500,7483],[14000,7326],[14500,7172],[15000,7025],[15500,6882],[16000,6739],[16500,6601],[17000,6464],[17500,6331],[18000,6198],[18500,6072],[19000,5951],[19500,5829],[20000,5709],[20500,5591],[21000,5470],[21500,5353],[22000,5240],[22500,5122],[23000,5008],[23056,5004]],"10":[[6750,9369],[7000,9282],[7250,9195],[7500,9109],[7750,9023],[7894,8958],[8000,8938],[8500,8774],[9000,8599],[9500,8432],[10000,8266],[10500,8101],[11000,7936],[11500,7775],[12000,7619],[12500,7464],[13000,7313],[13500,7159],[14000,7013],[14500,6872],[15000,6731],[15500,6595],[16000,6461],[16500,6327],[17000,6201],[17500,6074],[18000,5946],[18500,5819],[19000,5702],[19500,5577],[20000,5458],[20500,5343],[20514,5342]],"20":[[5250,9357],[5500,9271],[5750,9185],[6000,9100],[6250,9015],[6390,8957],[6500,8936],[7000,8767],[7500,8604],[8000,8440],[8500,8282],[9000,8117],[9500,7964],[10000,7813],[10500,7658],[11000,7507],[11500,7356],[12000,7212],[12500,7069],[13000,6921],[13500,6779],[14000,6635],[14500,6496],[15000,6354],[15162,6317]],"30":[[4000,9346],[4250,9262],[4500,9178],[4750,9094],[5000,9011],[5125,8958],[5500,8848],[6000,8683],[6500,8518],[7000,8355],[7500,8197],[8000,8041],[8500,7891],[9000,7731],[9500,7584],[10000,7447],[10011,7446]],"40":[[2750,9330],[3000,9244],[3250,9158],[3500,9073],[3807,8956],[4000,8902],[4500,8734],[4965,8587]]},"FT15":{"-30":[[10000,9378],[10250,9288],[10500,9197],[10750,9108],[11000,9019],[11125,8963],[11500,8844],[12000,8667],[12500,8496],[13000,8324],[13500,8158],[14000,7993],[14500,7829],[15000,7670],[15500,7512],[16000,7353],[16500,7202],[17000,7051],[17500,6905],[18000,6759],[18500,6617],[19000,6474],[19500,6337],[20000,6203],[20500,6072],[21000,5945],[21500,5819],[22000,5698],[22500,5580],[23000,5461],[23500,5345],[24000,5228],[24500,5116],[25000,5006],[25013,5006]],"-20":[[9250,9330],[9500,9240],[9750,9150],[10000,9061],[10248,8962],[10500,8889],[11000,8707],[11500,8534],[12000,8364],[12500,8194],[13000,8031],[13500,7865],[14000,7709],[14500,7551],[15000,7397],[15500,7244],[16000,7093],[16500,6947],[17000,6801],[17500,6659],[18000,6519],[18500,6381],[19000,6247],[19500,6116],[20000,5986],[20500,5863],[21000,5741],[21500,5620],[22000,5499],[22500,5383],[23000,5267],[23500,5153],[24000,5038],[24174,5006]],"-10":[[8250,9347],[8500,9258],[8750,9169],[9000,9080],[9293,8963],[9500,8906],[10000,8733],[10500,8559],[11000,8384],[11500,8216],[12000,8050],[12500,7887],[13000,7729],[13500,7576],[14000,7422],[14500,7268],[15000,7121],[15500,6974],[16000,6825],[16500,6683],[17000,6543],[17500,6406],[18000,6272],[18500,6139],[19000,6011],[19500,5886],[20000,5766],[20500,5645],[21000,5530],[21500,5413],[22000,5302],[22500,5188],[23000,5075],[23335,5006]],"0":[[7250,9328],[7500,9239],[7750,9150],[8000,9062],[8247,8963],[8500,8887],[9000,8713],[9500,8542],[10000,8372],[10500,8204],[11000,8039],[11500,7881],[12000,7727],[12500,7574],[13000,7425],[13500,7277],[14000,7130],[14500,6987],[15000,6843],[15500,6700],[16000,6558],[16500,6421],[17000,6285],[17500,6154],[18000,6027],[18500,5903],[19000,5780],[19500,5661],[20000,5548],[20500,5433],[21000,5320],[21500,5208],[22000,5099],[22457,5004]],"10":[[6000,9381],[6250,9293],[6500,9205],[6750,9117],[7000,9030],[7163,8962],[7500,8861],[8000,8689],[8500,8521],[9000,8352],[9500,8191],[10000,8030],[10500,7873],[11000,7714],[11500,7564],[12000,7417],[12500,7268],[13000,7125],[13500,6982],[14000,6838],[14500,6700],[15000,6561],[15500,6424],[16000,6287],[16500,6157],[17000,6028],[17500,5904],[18000,5784],[18500,5663],[19000,5547],[19500,5429],[20000,5321],[20005,5321]],"20":[[4500,9387],[4750,9299],[5000,9211],[5250,9124],[5500,9038],[5679,8963],[6000,8865],[6500,8695],[7000,8526],[7500,8363],[8000,8200],[8500,8038],[9000,7880],[9500,7725],[10000,7573],[10500,7422],[11000,7272],[11500,7127],[12000,6990],[12500,6852],[13000,6716],[13500,6583],[14000,6451],[14500,6319],[15000,6196],[15010,6195]],"30":[[3250,9376],[3500,9289],[3750,9203],[4000,9116],[4250,9031],[4414,8963],[4500,8947],[5000,8778],[5500,8609],[6000,8440],[6500,8276],[7000,8116],[7500,7961],[8000,7808],[8500,7658],[9000,7510],[9500,7362],[9951,7244]],"40":[[2000,9357],[2250,9270],[2500,9183],[2750,9097],[3000,9011],[3110,8962],[3500,8841],[4000,8674],[4500,8508],[4904,8383]]},"HES":{"-30":[[8000,9390],[8250,9325],[8500,9259],[8750,9191],[9000,9122],[9250,9050],[9368,8964],[9500,8958],[10000,8851],[10500,8677],[11000,8503],[11500,8330],[12000,8167],[12500,8007],[13000,7843],[13500,7690],[14000,7529],[14500,7380],[15000,7223],[15500,7072],[16000,6926],[16500,6779],[17000,6639],[17500,6495],[18000,6363],[18500,6223],[19000,6093],[19500,5959],[20000,5840],[20500,5714],[21000,5597],[21500,5474],[22000,5360],[22500,5243],[23000,5127],[23500,5014],[23552,5008]],"-20":[[7500,9230],[7750,9173],[8000,9113],[8250,9050],[8363,8963],[8500,8954],[9000,8883],[9500,8708],[10000,8541],[10500,8373],[11000,8207],[11500,8037],[12000,7882],[12500,7726],[13000,7565],[13500,7415],[14000,7259],[14500,7106],[15000,6957],[15500,6813],[16000,6673],[16500,6524],[17000,6394],[17500,6259],[18000,6130],[18500,5995],[19000,5876],[19500,5753],[20000,5634],[20500,5509],[21000,5399],[21500,5282],[22000,5172],[22500,5059],[22784,5008]],"-10":[[6250,9314],[6500,9248],[6750,9182],[7000,9114],[7329,8963],[7500,8949],[8000,8881],[8500,8715],[9000,8549],[9500,8377],[10000,8218],[10500,8055],[11000,7900],[11500,7739],[12000,7587],[12500,7437],[13000,7286],[13500,7134],[14000,6986],[14500,6846],[15000,6705],[15500,6563],[16000,6428],[16500,6291],[17000,6164],[17500,6028],[18000,5909],[18500,5785],[19000,5671],[19500,5548],[20000,5435],[20500,5319],[21000,5210],[21500,5094],[21956,5008]],"0":[[5250,9334],[5500,9265],[5750,9195],[6000,9124],[6250,9054],[6383,8962],[6500,8954],[7000,8883],[7500,8716],[8000,8549],[8500,8378],[9000,8218],[9500,8050],[10000,7899],[10500,7746],[11000,7593],[11500,7440],[12000,7296],[12500,7145],[13000,6997],[13500,6860],[14000,6717],[14500,6582],[15000,6443],[15500,6312],[16000,6183],[16500,6047],[17000,5925],[17500,5804],[18000,5690],[18500,5568],[19000,5454],[19500,5338],[20000,5230],[20500,5112],[21000,5010],[21040,5008]],"10":[[4250,9325],[4500,9251],[4750,9177],[5000,9103],[5349,8964],[5500,8953],[6000,8818],[6500,8652],[7000,8505],[7500,8350],[8000,8191],[8500,8027],[9000,7881],[9500,7721],[10000,7574],[10500,7423],[11000,7277],[11500,7122],[12000,6981],[12500,6846],[13000,6708],[13500,6575],[14000,6438],[14500,6310],[15000,6182],[15500,6053],[16000,5929],[16500,5807],[17000,5690],[17500,5568],[18000,5453],[18500,5335],[19000,5225],[19500,5107],[19829,5046]],"20":[[3000,9287],[3250,9212],[3500,9137],[3750,9060],[4048,8957],[4500,8831],[5000,8667],[5500,8506],[6000,8341],[6500,8176],[7000,8030],[7500,7877],[8000,7720],[8500,7564],[9000,7416],[9500,7265],[10000,7123],[10500,6983],[11000,6846],[11500,6711],[12000,6583],[12500,6459],[13000,6327],[13500,6202],[14000,6080],[14500,5955],[14835,5879]],"30":[[1500,9369],[1750,9297],[2000,9224],[2250,9150],[2500,9075],[2837,8961],[3000,8928],[3500,8769],[4000,8594],[4500,8433],[5000,8266],[5500,8106],[6000,7946],[6500,7790],[7000,7651],[7500,7506],[8000,7357],[8500,7204],[9000,7065],[9500,6916],[9781,6856]],"40":[[250,9359],[500,9286],[750,9213],[1000,9138],[1250,9063],[1566,8960],[2000,8831],[2500,8672],[3000,8505],[3500,8347],[4000,8180],[4500,8019],[4758,7949]]}};
-const VERSION = "1.0";
+const VERSION = "1.1";
 
 /* ================= planches ================= */
 const TEMPS = [-30,-20,-10,0,10,20,30,40];
@@ -421,7 +422,7 @@ function etatNeuf(){
     regimes:[1,2,3].map(i=>({nom:"Régime "+i, kt:"", conso:""})),
     carb:{miseRoute:"", coupureNb:"", coupureKg:"", secuPcb:"", secuMini:""},
     branches:[{id:uid(), nom:"Branche 1", lzA:0, lzB:1, regime:0, dist:"", unite:"nm",
-               planA:"HES", planB:"HES", pax:"", onsta:false, ostRegime:0, playtime:""}],
+               planA:"HES", planB:"HES", pax:"", onsta:false, ostRegime:0, playtime:"", coupure:false}],
   };
 }
 
@@ -470,7 +471,8 @@ function fusionner(brut){
       regime:Number.isInteger(s.regime)?s.regime:d.regime, dist:s.dist??"", unite:s.unite==="km"?"km":"nm",
       planA:PLANCHE_NOM_OK(s.planA)?s.planA:d.planA, planB:PLANCHE_NOM_OK(s.planB)?s.planB:d.planB,
       pax:s.pax??"", onsta:!!s.onsta,
-      ostRegime:Number.isInteger(s.ostRegime)?s.ostRegime:0, playtime:s.playtime??""}));
+      ostRegime:Number.isInteger(s.ostRegime)?s.ostRegime:0, playtime:s.playtime??"",
+      coupure:!!s.coupure}));
   }
   if (Array.isArray(brut.regimes)) brut.regimes.slice(0,3).forEach((g,i)=>{
     n.regimes[i] = {nom:g.nom || ("Régime "+(i+1)), kt:g.kt ?? "", conso:g.conso ?? ""};
@@ -792,7 +794,7 @@ function regimeOK(i){ const g = S.regimes[i]; return g && num(g.kt) > 0 && num(g
 function brancheNeuve(depart){
   return {id:uid(), nom:"Branche " + (S.branches.length + 1), lzA:depart, lzB:depart,
           regime:0, dist:"", unite:"nm", planA:"HES", planB:"HES", pax:"",
-          onsta:false, ostRegime:0, playtime:""};
+          onsta:false, ostRegime:0, playtime:"", coupure:false};
 }
 
 /* départ d'une branche : libre pour la première, sinon l'arrivée de la précédente */
@@ -818,7 +820,7 @@ function necMission(){
    le total des réservoirs moins la mise en route, déjà consommée au sol */
 function keroDecollage(){
   const k = S.carb;
-  return necMission() + num(k.coupureNb) * num(k.coupureKg) + num(k.secuPcb) + num(k.secuMini);
+  return necMission() + nbCoupures() * num(k.coupureKg) + num(k.secuPcb) + num(k.secuMini);
 }
 
 /* chaîne complète : chaque branche part de l'état laissé par la précédente */
@@ -836,6 +838,7 @@ function calculMission(){
     const pax = num(b.pax);
     const deco = config + pax + keroDebut;
     const poser = deco - x.conso;
+    const keroPoser = keroDebut - x.conso;
     brule += x.conso;
 
     let onsta = null;
@@ -843,12 +846,17 @@ function calculMission(){
       const reelleFin = poser - x.consoPT;
       brule += x.consoPT;
       onsta = {consoPT:x.consoPT, reelleDebut:poser, reelleFin,
+               keroDebut:keroPoser, keroFin:keroPoser - x.consoPT,
                offDebut: maxB === null ? null : maxB - poser,
                offFin:   maxB === null ? null : maxB - reelleFin};
     }
 
-    return {...x, iA, iB, maxA, maxB, config, pax, keroDebut, deco, poser,
-            keroFin: keroDebut - x.conso - x.consoPT,
+    /* coupure a l'arret : consommee apres le playtime, avant la branche suivante */
+    const coupure = b.coupure ? num(S.carb.coupureKg) : 0;
+    brule += coupure;
+
+    return {...x, iA, iB, maxA, maxB, config, pax, keroDebut, deco, poser, keroPoser, coupure,
+            keroFin: keroDebut - x.conso - x.consoPT - coupure,
             decoMaxParPoser: maxB === null ? null : maxB + x.conso, onsta};
   });
 }
@@ -947,6 +955,10 @@ function blocBranche(b, i, c){
           <button data-p="HES"  aria-pressed="${b.planB === "HES"}">HES</button></div></div>
       <div class="frm"><label>Masse PAX<small>à bord sur cette branche</small></label>
         <span class="unf" data-u="kg"><input class="iP" type="number" inputmode="decimal" placeholder="0" value="${esc(b.pax)}"></span></div>
+      <div class="frm stack"><label>Coupure à l'arrivée<small>arrêt moteurs après le poser</small></label>
+        <div class="seg sC">
+          <button data-c="0" aria-pressed="${!b.coupure}">Non</button>
+          <button data-c="1" aria-pressed="${b.coupure}">Oui</button></div></div>
       <div class="frm stack"><label>Sur zone à l'arrivée</label>
         <div class="seg sO">
           <button data-o="0" aria-pressed="${!b.onsta}">Transit seul</button>
@@ -999,6 +1011,7 @@ function blocBranche(b, i, c){
   d.querySelectorAll(".sPA [data-p]").forEach(bt=> bt.onclick = () => { b.planA = bt.dataset.p; maj(); });
   d.querySelectorAll(".sPB [data-p]").forEach(bt=> bt.onclick = () => { b.planB = bt.dataset.p; maj(); });
   d.querySelectorAll(".sO [data-o]").forEach(bt=> bt.onclick = () => { b.onsta = bt.dataset.o === "1"; maj(); });
+  d.querySelectorAll(".sC [data-c]").forEach(bt=> bt.onclick = () => { b.coupure = bt.dataset.c === "1"; maj(); });
   d.addEventListener("toggle", ()=>{ S.ouverts["br"+i] = d.open; sauverEtat(); });
   const sup = d.querySelector(".delbr");
   if (sup) sup.onclick = e => {
@@ -1044,11 +1057,16 @@ function dessinerMission(box, b, c){
     [`Masse max · ${PLANCHE_NOM[b.planA]}`, kg(c.maxA), false],
     ["Masse réelle décollage", kg(c.deco), true],
     ["Masse offerte", ...off(c.maxA === null ? null : c.maxA - c.deco)],
+    ["Carburant restant", kg(c.keroDebut), false],
     ["tit", "Arrivée · " + nomB],
     [`Masse max · ${PLANCHE_NOM[b.planB]}`, kg(c.maxB), false],
     ["Masse réelle poser", kg(c.poser), true],
     ["Masse offerte", ...off(c.maxB === null ? null : c.maxB - c.poser)],
+    ["Carburant restant", kg(c.keroPoser), false],
   ];
+  if (c.coupure)
+    rows.push(["Coupure à l'arrêt", "− " + fmt(c.coupure) + " kg", false],
+              ["Carburant après coupure", kg(c.keroFin), false]);
 
   let prem = false;
   const html = rows.map(r=>{
@@ -1072,6 +1090,7 @@ function dessinerMission(box, b, c){
       <tr class="cols"><td></td><td>Début PT</td><td>Fin PT</td></tr>
       <tr class="premier"><td>Masse réelle</td>${cel(kg(o.reelleDebut), true)}${cel(kg(o.reelleFin), true)}</tr>
       <tr><td>Masse offerte</td>${cel(off(o.offDebut))}${cel(off(o.offFin))}</tr>
+      <tr><td>Carburant restant</td>${cel(kg(o.keroDebut))}${cel(kg(o.keroFin))}</tr>
       </tbody></table>`));
   }
 
@@ -1106,13 +1125,15 @@ function nbBidons(){
 }
 function capaKero(){ return CAPA_KERO + BIDON_KG * nbBidons(); }
 
+const nbCoupures = () => S.branches.filter(b => b.coupure).length;
+
 function bilanCarburant(){
   const k = S.carb;
-  const coupure = num(k.coupureNb) * num(k.coupureKg);
+  const coupure = nbCoupures() * num(k.coupureKg);
   const nec = necMission();   /* somme des consommations de toutes les branches */
   const total = num(k.miseRoute) + nec + coupure + num(k.secuPcb) + num(k.secuMini);
   const capa = capaKero();
-  return {miseRoute:num(k.miseRoute), nec, coupure, secuPcb:num(k.secuPcb),
+  return {miseRoute:num(k.miseRoute), nec, coupure, nbCoupures:nbCoupures(), secuPcb:num(k.secuPcb),
           secuMini:num(k.secuMini), total, capa, bidons:nbBidons(),
           reste:capa - total, depasse:total > capa};
 }
@@ -1155,7 +1176,7 @@ function dessinerTotalCarb(box){
       <span class="max">${fmt(bc.capa)} kg</span>
     </div>
   </div>`));
-  if (bc.coupure) box.appendChild(el(`<div class="flag">Coupure : ${fmt(num(k.coupureNb))} × ${fmt(num(k.coupureKg))} = ${fmt(bc.coupure)} kg</div>`));
+  if (bc.coupure) box.appendChild(el(`<div class="flag">Coupure : ${fmt(bc.nbCoupures)} × ${fmt(num(k.coupureKg))} = ${fmt(bc.coupure)} kg</div>`));
 }
 
 /* recalcule tout ce qui dépend des régimes, sans toucher aux champs de saisie */
@@ -1170,6 +1191,7 @@ function majDerive(){
   });
   const cmp = document.getElementById("cmpBox"); if (cmp) dessinerComparaison(cmp);
   const nec = document.getElementById("necVal"); if (nec) nec.textContent = fmt(necMission()) + " kg";
+  const nc = document.getElementById("nbCoup"); if (nc) nc.textContent = fmt(nbCoupures());
   const ct = document.getElementById("carbTot"); if (ct) dessinerTotalCarb(ct);
 }
 
@@ -1222,9 +1244,9 @@ function rendreParam(){
         <span class="unf" data-u="kg"><input data-c="miseRoute" data-f="c-mr" type="number" inputmode="decimal" placeholder="0" value="${esc(k.miseRoute)}"></span></div>
       <div class="cbl"><span class="lab">NEC mission<small>calculé dans l'onglet Mission</small></span>
         <span class="ro" id="necVal">${fmt(bc.nec)} kg</span></div>
-      <div class="cbl large"><span class="lab">Coupure<small>nombre × kg</small></span>
+      <div class="cbl large"><span class="lab">Coupure<small>nombre repris de l'onglet Mission</small></span>
         <span class="duo">
-          <input data-c="coupureNb" data-f="c-cn" type="number" inputmode="numeric" placeholder="0" value="${esc(k.coupureNb)}">
+          <span class="ro" id="nbCoup">${fmt(bc.nbCoupures)}</span>
           <span class="x">×</span>
           <span class="unf" data-u="kg"><input data-c="coupureKg" data-f="c-ck" type="number" inputmode="decimal" placeholder="0" value="${esc(k.coupureKg)}"></span>
         </span></div>

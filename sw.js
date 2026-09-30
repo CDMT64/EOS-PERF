@@ -1,5 +1,5 @@
 /* EOS - service worker. Monter CACHE d'un cran a chaque mise en ligne. */
-const CACHE = "eos-v1.0.0";
+const CACHE = "perfs-v1.1.0";
 const FICHIERS = ["./", "./index.html", "./manifest.json", "./icon-192.png", "./icon-512.png", "./icon-maskable.png"];
 
 self.addEventListener("install", e => {
