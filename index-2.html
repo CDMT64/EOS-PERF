@@ -1,0 +1,1286 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#12171f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="EOS">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="apple-touch-icon" sizes="512x512" href="icon-512.png">
+<title>EOS · Cougar AS532</title>
+<style>
+:root{
+  --bg:#12171f; --panel:#1a212c; --panel2:#212a37; --line:#2c3746;
+  --ink:#e9edf2; --dim:#8c98a9; --faint:#5d6879;
+  --ok:#5fb98a; --warn:#e0a25c; --bad:#e2685f;
+  --r:10px;
+  --safeT:env(safe-area-inset-top,0px);
+  --safeB:env(safe-area-inset-bottom,0px);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%}
+body{
+  background:var(--bg); color:var(--ink);
+  font:15px/1.45 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  font-variant-numeric:tabular-nums;
+  overscroll-behavior-y:none;
+}
+input,button,select{font:inherit;color:inherit;font-variant-numeric:tabular-nums}
+:focus-visible{outline:2px solid #6ea8ff;outline-offset:2px}
+
+/* ---------- ossature ---------- */
+#app{display:flex;flex-direction:column;height:100%;height:100dvh}
+header{
+  padding:calc(var(--safeT) + 10px) 14px 0;
+  background:var(--bg);border-bottom:1px solid var(--line);flex:0 0 auto;
+}
+.brand{display:flex;align-items:baseline;gap:9px}
+.brand b{font-size:19px;font-weight:650;letter-spacing:.06em}
+.brand span{font-size:12.5px;color:var(--dim)}
+.brand .ver{margin-left:auto;font-size:11px;color:var(--faint)}
+nav{display:flex;gap:2px;margin-top:10px}
+nav button{
+  flex:1;background:none;border:0;border-bottom:2px solid transparent;
+  padding:9px 2px 10px;color:var(--dim);font-size:13.5px;font-weight:500;cursor:pointer;
+  white-space:nowrap;
+}
+nav button[aria-selected="true"]{color:var(--ink);border-bottom-color:#6ea8ff}
+main{flex:1 1 auto;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px 14px 18px}
+.view[hidden]{display:none}
+
+/* ---------- blocs ---------- */
+.bloc{
+  --h:205;
+  background:var(--panel);border:1px solid var(--line);
+  border-left:3px solid hsl(var(--h) 58% 55%);
+  border-radius:var(--r);margin-bottom:10px;overflow:hidden;
+}
+.bloc>summary{
+  list-style:none;cursor:pointer;display:flex;align-items:center;gap:10px;
+  padding:11px 13px;background:hsl(var(--h) 34% 17%);
+}
+.bloc>summary::-webkit-details-marker{display:none}
+.chev{width:9px;height:9px;border-right:2px solid hsl(var(--h) 50% 68%);border-bottom:2px solid hsl(var(--h) 50% 68%);
+  transform:rotate(-45deg);transition:transform .18s;flex:0 0 auto;margin-left:2px}
+details[open]>summary .chev{transform:rotate(45deg)}
+.bloc h2{margin:0;font-size:14.5px;font-weight:600;letter-spacing:.01em}
+.blocname{background:none;border:0;border-bottom:1px dotted hsl(var(--h) 40% 45%);padding:1px 1px;
+  font-size:14.5px;font-weight:600;width:9em;min-width:0;border-radius:0}
+.bloc .sub{font-size:11.5px;color:var(--dim);font-weight:400;margin-left:1px}
+.btot{margin-left:auto;font-size:15px;font-weight:650;color:hsl(var(--h) 62% 68%)}
+.delbr{background:none;border:0;color:var(--faint);font-size:20px;line-height:1;cursor:pointer;padding:2px 2px 2px 8px}
+.delbr:hover{color:var(--bad)}
+.body{padding:10px 12px 12px;background:hsl(var(--h) 26% 13%)}
+/* variante neutre : blocs des régimes */
+.bloc.gris{border-left-color:#7e8a99}
+.bloc.gris>summary{background:#2a323d}
+.bloc.gris>summary .chev{border-right-color:#a7b1bf;border-bottom-color:#a7b1bf}
+.bloc.gris .body{background:#212831}
+.bloc.gris .blocname{border-bottom-color:#5b6673}
+.bloc.gris input[type=text]{background:#2b333e;border-color:#3b4553}
+.bloc.gris .unf input[type=number]{background:#39434f;border-color:#57626f;color:#fff}
+.bloc .row,.bloc .mrow{border-bottom-color:hsl(var(--h) 20% 22%)}
+.bloc input[type=text]{background:hsl(var(--h) 22% 17%);border-color:hsl(var(--h) 18% 26%)}
+.bloc .kgf input[type=number],.bloc .step{background:hsl(var(--h) 26% 29%);border-color:hsl(var(--h) 24% 42%)}
+.bloc .kgf input[type=number],.bloc .step input{color:#fff}
+.bloc .step button{color:hsl(var(--h) 40% 80%)}
+
+/* ---------- lignes ---------- */
+.row{margin-bottom:9px;padding-bottom:9px;border-bottom:1px solid rgba(255,255,255,.05)}
+.row:last-of-type{border-bottom:0;padding-bottom:2px}
+.row .nom{margin-bottom:5px}
+.line{display:grid;grid-template-columns:82px 12px 104px 1fr 26px;gap:6px;align-items:center}
+.kgf{position:relative}
+.kgf input[type=number]{padding-right:25px}
+.kgf::after{content:"kg";position:absolute;right:7px;top:50%;transform:translateY(-50%);
+  font-size:11px;color:var(--faint);pointer-events:none}
+.step{display:grid;grid-template-columns:30px 1fr 30px;align-items:center;
+  background:var(--panel2);border:1px solid var(--line);border-radius:7px;overflow:hidden}
+.step button{background:none;border:0;padding:8px 0;font-size:17px;line-height:1;color:var(--dim);cursor:pointer}
+.step button:active{background:rgba(255,255,255,.07)}
+.step input{background:none;border:0;border-radius:0;padding:8px 0;text-align:center;font-size:14.5px}
+.tag{display:inline-block;margin:0 0 6px;padding:2px 7px;border:1px solid var(--line);
+  border-radius:5px;font-size:11px;color:var(--dim)}
+.line .x{text-align:center;color:var(--faint);font-size:13px}
+input[type=text],input[type=number]{
+  width:100%;background:var(--panel2);border:1px solid var(--line);border-radius:7px;
+  padding:8px 9px;font-size:14.5px;min-width:0;
+}
+input[type=number]{text-align:right;-moz-appearance:textfield}
+.step input[type=number]{text-align:center}
+input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+input::placeholder{color:var(--faint)}
+.calc{text-align:right;font-size:14.5px;color:var(--ink);font-weight:550;padding-right:2px}
+.calc small{color:var(--faint);font-weight:400;font-size:11.5px;margin-left:2px}
+.del{background:none;border:0;color:var(--faint);font-size:19px;line-height:1;cursor:pointer;padding:4px}
+.del:hover{color:var(--bad)}
+.add{
+  margin-top:4px;width:100%;background:none;border:1px dashed var(--line);border-radius:7px;
+  padding:9px;color:var(--dim);font-size:13.5px;cursor:pointer;
+}
+.add:hover{border-color:hsl(var(--h) 45% 45%);color:hsl(var(--h) 55% 70%)}
+.vide{color:var(--faint);font-size:13px;padding:6px 2px 8px}
+
+/* ---------- machine ---------- */
+.mrow{margin-bottom:9px;padding-bottom:9px;border-bottom:1px solid rgba(255,255,255,.05)}
+.mrow:last-of-type{border-bottom:0;padding-bottom:2px}
+.mrow .nom{margin-bottom:5px}
+.mrow .line{grid-template-columns:82px 1fr 26px}
+.mrow .etat{font-size:12px;color:var(--faint)}
+.tri{display:grid;grid-template-columns:repeat(3,1fr);margin-top:7px;
+  border:1px solid hsl(var(--h) 18% 28%);border-radius:7px;overflow:hidden}
+.tri button{background:none;border:0;padding:8px 2px;font-size:12.5px;color:var(--dim);
+  cursor:pointer;white-space:nowrap;text-align:center}
+.tri button+button{border-left:1px solid hsl(var(--h) 18% 28%)}
+.tri button[aria-pressed="true"]{background:hsl(var(--h) 45% 32%);color:#fff}
+.tri button[data-e="mve"][aria-pressed="true"]{background:hsl(var(--h) 14% 34%);color:var(--ink)}
+.sw{position:relative;width:42px;height:24px;flex:0 0 auto;justify-self:end;display:block}
+.sw input{position:absolute;opacity:0;width:100%;height:100%;margin:0;cursor:pointer}
+.sw i{position:absolute;inset:0;background:#39434f;border-radius:12px;transition:background .15s}
+.sw i::after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;
+  background:#9aa6b5;transition:transform .15s,background .15s}
+.sw input:checked+i{background:hsl(var(--h) 48% 34%)}
+.sw input:checked+i::after{transform:translateX(18px);background:hsl(var(--h) 65% 70%)}
+.sw input:focus-visible+i{outline:2px solid #6ea8ff;outline-offset:2px}
+.mve{display:grid;grid-template-columns:1fr 104px;gap:8px;align-items:center;
+  padding-bottom:10px;margin-bottom:10px;border-bottom:1px solid var(--line)}
+.mve label{font-size:14px}
+.mve small{display:block;color:var(--dim);font-size:11.5px}
+
+/* ---------- total ---------- */
+.totbar{
+  flex:0 0 auto;background:#0d1219;border-top:1px solid var(--line);
+  padding:10px 14px calc(var(--safeB) + 10px);
+}
+.totline{display:flex;align-items:baseline;gap:10px}
+.totline b{font-size:31px;font-weight:650;letter-spacing:-.01em;margin-left:auto}
+.totline b small{font-size:14px;font-weight:500;color:var(--dim);margin-left:3px}
+.totlabel{font-size:13px;color:var(--dim)}
+.detail{font-size:11.5px;color:var(--faint);margin-top:2px}
+
+/* ---------- configs ---------- */
+.tools{display:flex;flex-wrap:wrap;gap:7px;margin:14px 0 4px}
+.tools button{
+  flex:1 1 auto;background:var(--panel);border:1px solid var(--line);border-radius:8px;
+  padding:10px 12px;color:var(--ink);font-size:13.5px;cursor:pointer
+}
+.tools button:hover{background:var(--panel2)}
+.cfglist{margin-top:8px}
+.cfg{display:flex;align-items:center;gap:9px;background:var(--panel);border:1px solid var(--line);
+  border-radius:8px;padding:9px 11px;margin-bottom:6px}
+.cfg .nm{flex:1;font-size:14px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cfg .dt{font-size:11px;color:var(--faint)}
+.cfg button{background:var(--panel2);border:1px solid var(--line);border-radius:6px;
+  padding:6px 10px;font-size:12.5px;cursor:pointer}
+
+/* ---------- perfos ---------- */
+.lz{--h:205;background:var(--panel);border:1px solid var(--line);border-left:3px solid hsl(var(--h) 58% 55%);
+  border-radius:var(--r);margin-bottom:10px;overflow:hidden}
+.lz>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:10px;
+  padding:11px 13px;background:hsl(var(--h) 34% 17%)}
+.lz>summary::-webkit-details-marker{display:none}
+.lzname{background:none;border:0;border-bottom:1px dotted hsl(var(--h) 40% 45%);padding:2px 1px;
+  font-size:14.5px;font-weight:700;width:5.5em;min-width:0;flex:0 1 auto}
+.lzres{margin-left:auto;font-size:14px;font-weight:600;color:hsl(var(--h) 62% 70%);
+  text-align:right;white-space:nowrap;flex:0 0 auto}
+.lzres em{display:block;font-size:10.5px;font-style:normal;color:var(--dim);font-weight:400}
+.frm{display:grid;grid-template-columns:1fr 112px;gap:8px;align-items:center;margin-bottom:8px}
+.frm.stack{grid-template-columns:1fr;gap:5px}
+.frm label{font-size:13.5px}
+.frm label small{display:block;color:var(--faint);font-size:11px}
+.seg{display:flex;background:var(--panel2);border:1px solid var(--line);border-radius:7px;overflow:hidden}
+.seg button{flex:1;background:none;border:0;padding:8px 2px;font-size:12.5px;color:var(--dim);cursor:pointer}
+.seg button[aria-pressed="true"]{background:hsl(var(--h) 42% 30%);color:#fff}
+table.res{width:100%;border-collapse:collapse;margin-top:11px;font-size:14px}
+table.res th{font-size:10.5px;color:var(--faint);font-weight:500;text-align:right;padding:0 0 5px;letter-spacing:.03em}
+table.res th:first-child{text-align:left}
+table.res td{padding:7px 0;border-top:1px solid var(--line);text-align:right}
+table.res td:first-child{text-align:left;color:var(--dim);font-size:13.5px}
+table.res td.m{font-weight:650;font-size:16px}
+table.res td.lu{color:var(--faint);font-size:13px}
+.flag{font-size:11.5px;color:var(--faint);text-align:right;margin-top:3px}
+.lim{display:flex;align-items:baseline;gap:8px;margin-top:10px;padding:8px 10px;
+  background:hsl(var(--h) 26% 15%);border:1px solid hsl(var(--h) 22% 27%);border-radius:7px}
+.lim .l{font-size:12.5px;color:var(--dim)}
+.lim .v{margin-left:auto;font-size:16px;font-weight:650}
+.alerte{background:#3a2420;border:1px solid #6b3a33;color:#f0b5ac;border-radius:7px;
+  padding:8px 10px;font-size:12.5px;margin-top:9px}
+.note{font-size:12px;color:var(--faint);margin:2px 0 16px;line-height:1.5;text-align:center}
+.sep{height:1px;background:var(--line);margin:18px 0 6px}
+.h3{font-size:12.5px;color:var(--dim);margin:0 0 8px;font-weight:600}
+.reg{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:2px}
+.reg .f{display:flex;flex-direction:column;gap:4px}
+.reg .f span{font-size:11px;color:var(--faint)}
+.unf{position:relative}
+.unf input[type=number]{padding-right:34px;background:hsl(var(--h) 26% 29%);border-color:hsl(var(--h) 24% 42%);color:#fff}
+.unf::after{content:attr(data-u);position:absolute;right:8px;top:50%;transform:translateY(-50%);
+  font-size:11px;color:#c6d0dc;pointer-events:none}
+select{width:100%;background:hsl(var(--h) 26% 29%);border:1px solid hsl(var(--h) 24% 42%);
+  border-radius:7px;padding:9px 8px;font-size:14px;color:#fff;-webkit-appearance:none;appearance:none;
+  background-image:linear-gradient(45deg,transparent 50%,#c6d0dc 50%),linear-gradient(135deg,#c6d0dc 50%,transparent 50%);
+  background-position:calc(100% - 15px) 50%,calc(100% - 10px) 50%;background-size:5px 5px,5px 5px;
+  background-repeat:no-repeat;padding-right:28px}
+.trajet{display:grid;grid-template-columns:1fr 22px 1fr;gap:6px;align-items:center;margin-bottom:9px}
+.trajet .fixe{background:hsl(var(--h) 20% 18%);border:1px solid hsl(var(--h) 18% 28%);border-radius:7px;
+  padding:9px 8px;font-size:14px;color:var(--dim);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.trajet .fl{text-align:center;color:var(--dim)}
+.dist{display:grid;grid-template-columns:1fr 92px;gap:8px;align-items:center}
+.erreurs{background:#3a2420;border:1px solid #7d423a;border-radius:8px;padding:11px 13px;margin-bottom:12px}
+.erreurs p{margin:0 0 5px;color:#f5a79c;font-weight:700;font-size:12.5px;text-align:center;line-height:1.45}
+.erreurs p:last-child{margin-bottom:0}
+.manque{background:#2f2a1c;border:1px solid #6a5c33;color:#e8d5a3;border-radius:7px;
+  padding:9px 11px;font-size:12.5px;margin-bottom:10px}
+table.res td.sub2{padding-left:10px;color:var(--faint);font-size:12.5px}
+table.res tr.gap td{border-top:2px solid var(--line)}
+.derive{margin-top:9px;font-size:12px;color:var(--dim)}
+table.res tr.tit td{padding:14px 0 5px;border-top:0;font-size:11px;letter-spacing:.06em;
+  text-transform:uppercase;color:hsl(var(--h) 45% 62%);font-weight:600}
+table.res tr.tit:first-child td{padding-top:2px}
+table.res tr.premier td{border-top:1px solid hsl(var(--h) 22% 30%)}
+table.res tr.cols td{padding:0 0 4px;border-top:0;font-size:10.5px;color:var(--faint);
+  text-align:right;letter-spacing:.03em}
+.cbl{display:grid;grid-template-columns:1fr 112px;gap:8px;align-items:center;padding:7px 0;
+  border-bottom:1px solid hsl(var(--h) 20% 22%)}
+.cbl:last-of-type{border-bottom:0}
+.cbl .lab{font-size:13.5px}
+.cbl .lab small{display:block;color:var(--faint);font-size:11px}
+.cbl .ro{text-align:right;font-size:15px;font-weight:600;padding-right:2px}
+.cbl.large{grid-template-columns:1fr 178px}
+.cbl .duo{display:grid;grid-template-columns:52px 12px 1fr;gap:6px;align-items:center}
+.cbl .duo .x{text-align:center;color:var(--faint);font-size:12px}
+.ctot{margin-top:12px;padding:11px 12px;background:hsl(var(--h) 30% 20%);
+  border:1px solid hsl(var(--h) 26% 36%);border-radius:8px}
+.ctot .haut{display:flex;align-items:baseline;gap:10px}
+.ctot .l{font-size:13px;color:var(--dim)}
+.ctot .v{margin-left:auto;font-size:24px;font-weight:650}
+.jauge{display:flex;align-items:center;gap:8px;margin-top:8px}
+.jauge .b{flex:1;height:7px;border-radius:4px;background:rgba(255,255,255,.1);overflow:hidden}
+.jauge .b i{display:block;height:100%;border-radius:4px}
+.jauge .max{font-size:10.5px;color:var(--faint);white-space:nowrap}
+.derive b{color:var(--ink);font-weight:600}
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <div class="brand"><b>EOS</b><span>Cougar AS532 · 2 GTM</span><span class="ver" id="ver"></span></div>
+    <nav role="tablist">
+      <button role="tab" id="t-config" aria-selected="true" aria-controls="v-config">Config</button>
+      <button role="tab" id="t-perfo" aria-selected="false" aria-controls="v-perfo">Perfos</button>
+      <button role="tab" id="t-param" aria-selected="false" aria-controls="v-param">Paramètres</button>
+      <button role="tab" id="t-miss" aria-selected="false" aria-controls="v-miss">Mission</button>
+    </nav>
+  </header>
+
+  <main>
+    <section class="view" id="v-config" role="tabpanel"></section>
+    <section class="view" id="v-perfo" role="tabpanel" hidden></section>
+    <section class="view" id="v-param" role="tabpanel" hidden></section>
+    <section class="view" id="v-miss" role="tabpanel" hidden></section>
+  </main>
+
+  <div class="totbar">
+    <div class="totline">
+      <span class="totlabel" id="totlabel">Masse équipée</span>
+      <b><span id="total">0</span><small>kg</small></b>
+    </div>
+    <div class="detail" id="detail"></div>
+  </div>
+</div>
+<script>
+const PLANCHES = {"FT10":{"-30":[[10750,9365],[11000,9276],[11250,9187],[11500,9099],[11750,9011],[11874,8957],[12000,8924],[12500,8751],[13000,8578],[13500,8402],[14000,8231],[14500,8065],[15000,7899],[15500,7733],[16000,7568],[16500,7410],[17000,7254],[17500,7098],[18000,6944],[18500,6793],[19000,6653],[19500,6509],[20000,6376],[20500,6242],[21000,6110],[21500,5983],[22000,5858],[22500,5733],[23000,5607],[23500,5487],[24000,5365],[24500,5242],[25000,5125],[25013,5124]],"-20":[[9750,9403],[10000,9314],[10250,9225],[10500,9136],[10750,9048],[10982,8956],[11000,8955],[11500,8787],[12000,8613],[12500,8442],[13000,8272],[13500,8101],[14000,7935],[14500,7773],[15000,7611],[15500,7451],[16000,7293],[16500,7139],[17000,6992],[17500,6842],[18000,6694],[18500,6551],[19000,6418],[19500,6283],[20000,6155],[20500,6027],[21000,5900],[21500,5779],[22000,5657],[22500,5535],[23000,5414],[23500,5297],[24000,5179],[24500,5058],[24760,5004]],"-10":[[9000,9326],[9250,9238],[9500,9151],[9750,9064],[10024,8954],[10500,8808],[11000,8635],[11500,8461],[12000,8295],[12500,8130],[13000,7962],[13500,7794],[14000,7631],[14500,7476],[15000,7318],[15500,7164],[16000,7012],[16500,6868],[17000,6723],[17500,6582],[18000,6446],[18500,6307],[19000,6182],[19500,6056],[20000,5933],[20500,5811],[21000,5688],[21500,5569],[22000,5449],[22500,5331],[23000,5214],[23500,5099],[23948,5002]],"0":[[7750,9395],[8000,9309],[8250,9223],[8500,9138],[8750,9052],[8986,8958],[9000,8956],[9500,8799],[10000,8633],[10500,8461],[11000,8291],[11500,8126],[12000,7964],[12500,7801],[13000,7640],[13500,7483],[14000,7326],[14500,7172],[15000,7025],[15500,6882],[16000,6739],[16500,6601],[17000,6464],[17500,6331],[18000,6198],[18500,6072],[19000,5951],[19500,5829],[20000,5709],[20500,5591],[21000,5470],[21500,5353],[22000,5240],[22500,5122],[23000,5008],[23056,5004]],"10":[[6750,9369],[7000,9282],[7250,9195],[7500,9109],[7750,9023],[7894,8958],[8000,8938],[8500,8774],[9000,8599],[9500,8432],[10000,8266],[10500,8101],[11000,7936],[11500,7775],[12000,7619],[12500,7464],[13000,7313],[13500,7159],[14000,7013],[14500,6872],[15000,6731],[15500,6595],[16000,6461],[16500,6327],[17000,6201],[17500,6074],[18000,5946],[18500,5819],[19000,5702],[19500,5577],[20000,5458],[20500,5343],[20514,5342]],"20":[[5250,9357],[5500,9271],[5750,9185],[6000,9100],[6250,9015],[6390,8957],[6500,8936],[7000,8767],[7500,8604],[8000,8440],[8500,8282],[9000,8117],[9500,7964],[10000,7813],[10500,7658],[11000,7507],[11500,7356],[12000,7212],[12500,7069],[13000,6921],[13500,6779],[14000,6635],[14500,6496],[15000,6354],[15162,6317]],"30":[[4000,9346],[4250,9262],[4500,9178],[4750,9094],[5000,9011],[5125,8958],[5500,8848],[6000,8683],[6500,8518],[7000,8355],[7500,8197],[8000,8041],[8500,7891],[9000,7731],[9500,7584],[10000,7447],[10011,7446]],"40":[[2750,9330],[3000,9244],[3250,9158],[3500,9073],[3807,8956],[4000,8902],[4500,8734],[4965,8587]]},"FT15":{"-30":[[10000,9378],[10250,9288],[10500,9197],[10750,9108],[11000,9019],[11125,8963],[11500,8844],[12000,8667],[12500,8496],[13000,8324],[13500,8158],[14000,7993],[14500,7829],[15000,7670],[15500,7512],[16000,7353],[16500,7202],[17000,7051],[17500,6905],[18000,6759],[18500,6617],[19000,6474],[19500,6337],[20000,6203],[20500,6072],[21000,5945],[21500,5819],[22000,5698],[22500,5580],[23000,5461],[23500,5345],[24000,5228],[24500,5116],[25000,5006],[25013,5006]],"-20":[[9250,9330],[9500,9240],[9750,9150],[10000,9061],[10248,8962],[10500,8889],[11000,8707],[11500,8534],[12000,8364],[12500,8194],[13000,8031],[13500,7865],[14000,7709],[14500,7551],[15000,7397],[15500,7244],[16000,7093],[16500,6947],[17000,6801],[17500,6659],[18000,6519],[18500,6381],[19000,6247],[19500,6116],[20000,5986],[20500,5863],[21000,5741],[21500,5620],[22000,5499],[22500,5383],[23000,5267],[23500,5153],[24000,5038],[24174,5006]],"-10":[[8250,9347],[8500,9258],[8750,9169],[9000,9080],[9293,8963],[9500,8906],[10000,8733],[10500,8559],[11000,8384],[11500,8216],[12000,8050],[12500,7887],[13000,7729],[13500,7576],[14000,7422],[14500,7268],[15000,7121],[15500,6974],[16000,6825],[16500,6683],[17000,6543],[17500,6406],[18000,6272],[18500,6139],[19000,6011],[19500,5886],[20000,5766],[20500,5645],[21000,5530],[21500,5413],[22000,5302],[22500,5188],[23000,5075],[23335,5006]],"0":[[7250,9328],[7500,9239],[7750,9150],[8000,9062],[8247,8963],[8500,8887],[9000,8713],[9500,8542],[10000,8372],[10500,8204],[11000,8039],[11500,7881],[12000,7727],[12500,7574],[13000,7425],[13500,7277],[14000,7130],[14500,6987],[15000,6843],[15500,6700],[16000,6558],[16500,6421],[17000,6285],[17500,6154],[18000,6027],[18500,5903],[19000,5780],[19500,5661],[20000,5548],[20500,5433],[21000,5320],[21500,5208],[22000,5099],[22457,5004]],"10":[[6000,9381],[6250,9293],[6500,9205],[6750,9117],[7000,9030],[7163,8962],[7500,8861],[8000,8689],[8500,8521],[9000,8352],[9500,8191],[10000,8030],[10500,7873],[11000,7714],[11500,7564],[12000,7417],[12500,7268],[13000,7125],[13500,6982],[14000,6838],[14500,6700],[15000,6561],[15500,6424],[16000,6287],[16500,6157],[17000,6028],[17500,5904],[18000,5784],[18500,5663],[19000,5547],[19500,5429],[20000,5321],[20005,5321]],"20":[[4500,9387],[4750,9299],[5000,9211],[5250,9124],[5500,9038],[5679,8963],[6000,8865],[6500,8695],[7000,8526],[7500,8363],[8000,8200],[8500,8038],[9000,7880],[9500,7725],[10000,7573],[10500,7422],[11000,7272],[11500,7127],[12000,6990],[12500,6852],[13000,6716],[13500,6583],[14000,6451],[14500,6319],[15000,6196],[15010,6195]],"30":[[3250,9376],[3500,9289],[3750,9203],[4000,9116],[4250,9031],[4414,8963],[4500,8947],[5000,8778],[5500,8609],[6000,8440],[6500,8276],[7000,8116],[7500,7961],[8000,7808],[8500,7658],[9000,7510],[9500,7362],[9951,7244]],"40":[[2000,9357],[2250,9270],[2500,9183],[2750,9097],[3000,9011],[3110,8962],[3500,8841],[4000,8674],[4500,8508],[4904,8383]]},"HES":{"-30":[[8000,9390],[8250,9325],[8500,9259],[8750,9191],[9000,9122],[9250,9050],[9368,8964],[9500,8958],[10000,8851],[10500,8677],[11000,8503],[11500,8330],[12000,8167],[12500,8007],[13000,7843],[13500,7690],[14000,7529],[14500,7380],[15000,7223],[15500,7072],[16000,6926],[16500,6779],[17000,6639],[17500,6495],[18000,6363],[18500,6223],[19000,6093],[19500,5959],[20000,5840],[20500,5714],[21000,5597],[21500,5474],[22000,5360],[22500,5243],[23000,5127],[23500,5014],[23552,5008]],"-20":[[7500,9230],[7750,9173],[8000,9113],[8250,9050],[8363,8963],[8500,8954],[9000,8883],[9500,8708],[10000,8541],[10500,8373],[11000,8207],[11500,8037],[12000,7882],[12500,7726],[13000,7565],[13500,7415],[14000,7259],[14500,7106],[15000,6957],[15500,6813],[16000,6673],[16500,6524],[17000,6394],[17500,6259],[18000,6130],[18500,5995],[19000,5876],[19500,5753],[20000,5634],[20500,5509],[21000,5399],[21500,5282],[22000,5172],[22500,5059],[22784,5008]],"-10":[[6250,9314],[6500,9248],[6750,9182],[7000,9114],[7329,8963],[7500,8949],[8000,8881],[8500,8715],[9000,8549],[9500,8377],[10000,8218],[10500,8055],[11000,7900],[11500,7739],[12000,7587],[12500,7437],[13000,7286],[13500,7134],[14000,6986],[14500,6846],[15000,6705],[15500,6563],[16000,6428],[16500,6291],[17000,6164],[17500,6028],[18000,5909],[18500,5785],[19000,5671],[19500,5548],[20000,5435],[20500,5319],[21000,5210],[21500,5094],[21956,5008]],"0":[[5250,9334],[5500,9265],[5750,9195],[6000,9124],[6250,9054],[6383,8962],[6500,8954],[7000,8883],[7500,8716],[8000,8549],[8500,8378],[9000,8218],[9500,8050],[10000,7899],[10500,7746],[11000,7593],[11500,7440],[12000,7296],[12500,7145],[13000,6997],[13500,6860],[14000,6717],[14500,6582],[15000,6443],[15500,6312],[16000,6183],[16500,6047],[17000,5925],[17500,5804],[18000,5690],[18500,5568],[19000,5454],[19500,5338],[20000,5230],[20500,5112],[21000,5010],[21040,5008]],"10":[[4250,9325],[4500,9251],[4750,9177],[5000,9103],[5349,8964],[5500,8953],[6000,8818],[6500,8652],[7000,8505],[7500,8350],[8000,8191],[8500,8027],[9000,7881],[9500,7721],[10000,7574],[10500,7423],[11000,7277],[11500,7122],[12000,6981],[12500,6846],[13000,6708],[13500,6575],[14000,6438],[14500,6310],[15000,6182],[15500,6053],[16000,5929],[16500,5807],[17000,5690],[17500,5568],[18000,5453],[18500,5335],[19000,5225],[19500,5107],[19829,5046]],"20":[[3000,9287],[3250,9212],[3500,9137],[3750,9060],[4048,8957],[4500,8831],[5000,8667],[5500,8506],[6000,8341],[6500,8176],[7000,8030],[7500,7877],[8000,7720],[8500,7564],[9000,7416],[9500,7265],[10000,7123],[10500,6983],[11000,6846],[11500,6711],[12000,6583],[12500,6459],[13000,6327],[13500,6202],[14000,6080],[14500,5955],[14835,5879]],"30":[[1500,9369],[1750,9297],[2000,9224],[2250,9150],[2500,9075],[2837,8961],[3000,8928],[3500,8769],[4000,8594],[4500,8433],[5000,8266],[5500,8106],[6000,7946],[6500,7790],[7000,7651],[7500,7506],[8000,7357],[8500,7204],[9000,7065],[9500,6916],[9781,6856]],"40":[[250,9359],[500,9286],[750,9213],[1000,9138],[1250,9063],[1566,8960],[2000,8831],[2500,8672],[3000,8505],[3500,8347],[4000,8180],[4500,8019],[4758,7949]]}};
+const VERSION = "1.0";
+
+/* ================= planches ================= */
+const TEMPS = [-30,-20,-10,0,10,20,30,40];
+const LECTURE_MAX = 9400, MASSE_MAX = 9000;
+const PEN_MPAI = {ouvertes:0, fermees:2};
+const DDJ_DT = 2;
+
+function pressionAltitude(alt, qnh){
+  const p = qnh * Math.pow(1 - 6.87535e-6*alt, 5.2559);
+  return (1 - Math.pow(p/1013.25, 1/5.2559)) / 6.87535e-6;
+}
+const tempISA = zp => 15 - 1.98*zp/1000;
+const oatMax  = zp => Math.min(50, tempISA(zp)+35);
+
+function surCourbe(pts, zp){
+  let a, b;
+  if (zp <= pts[0][0])            { a=pts[0]; b=pts[1]; }
+  else if (zp >= pts[pts.length-1][0]) { a=pts[pts.length-2]; b=pts[pts.length-1]; }
+  else {
+    for (let i=0;i<pts.length-1;i++) if (pts[i][0]<=zp && zp<=pts[i+1][0]){ a=pts[i]; b=pts[i+1]; break; }
+  }
+  return a[1] + (b[1]-a[1])*(zp-a[0])/(b[0]-a[0]);
+}
+
+/* lecture brute de la planche, plafonnée au bord droit (9400 kg) */
+function lecturePlanche(planche, zp, tEntree){
+  const tab = PLANCHES[planche];
+  const t = tEntree;
+  let m, extrap = false;
+  if (t <= -30){
+    m = surCourbe(tab["-30"], zp);           /* plafonne sur -30, conservatif */
+  } else if (t >= 40){
+    /* au-dela de la derniere isotherme tracee : prolongement sur la pente +30 -> +40 */
+    const m30 = surCourbe(tab["30"], zp), m40 = surCourbe(tab["40"], zp);
+    m = m40 + (m40 - m30) * (t - 40) / 10;
+    extrap = t > 40;
+  } else {
+    let lo = -30, hi = 40;
+    for (const x of TEMPS){ if (x <= t && x > lo) lo = x; }
+    for (const x of TEMPS){ if (x >= t && x < hi) hi = x; }
+    m = (lo === hi) ? surCourbe(tab[String(lo)], zp)
+      : (1-(t-lo)/(hi-lo))*surCourbe(tab[String(lo)], zp) + ((t-lo)/(hi-lo))*surCourbe(tab[String(hi)], zp);
+  }
+  return m > LECTURE_MAX ? {lue:LECTURE_MAX, hors:true, extrap} : {lue:m, hors:false, extrap};
+}
+
+function calculLZ(lz){
+  const alt = num(lz.alt), qnh = num(lz.qnh) || 1013.25, oat = num(lz.oat);
+  const zp = pressionAltitude(alt, qnh);
+  const tEnt = oat + (lz.ddj ? DDJ_DT : 0);
+  const pen = PEN_MPAI[lz.mpai] ?? 0;
+  const out = {zp, tEnt, pen, isa:tempISA(zp), oatMax:oatMax(zp), planches:{}, alertes:[]};
+  for (const p of ["FT10","FT15","HES"]){
+    const {lue, hors} = lecturePlanche(p, zp, tEnt);
+    const penalisee = lue*(1-pen/100);
+    out.planches[p] = {lue, hors, penalisee, masse:Math.min(penalisee, MASSE_MAX), ecrete:penalisee>MASSE_MAX};
+  }
+  if (lz.oat !== "" && oat > out.oatMax)
+    out.alertes.push(`Hors domaine : OAT ${fmt(oat,0)} °C au-dessus de la limite ${fmt(out.oatMax,1)} °C (50 °C ou ISA+35).`);
+  if (lz.oat !== "" && oat < -30)
+    out.alertes.push("OAT sous −30 °C : calcul plafonné sur l'isotherme −30, résultat conservatif.");
+  return out;
+}
+
+/* ================= état ================= */
+const BLOCS = [
+  {id:"equipage",   titre:"Équipage",     sub:"",  h:168, unite:"pers."},
+  {id:"soute",      titre:"Soute",        sub:"",                              h:38,  unite:""},
+  {id:"aero",       titre:"Aérocordage",  sub:"",                              h:265, unite:""},
+  {id:"treuil",     titre:"Treuillage",   sub:"",                              h:192, unite:""},
+  {id:"armement",   titre:"Armement",     sub:"",                              h:8,   unite:""},
+  {id:"divers",     titre:"Divers",       sub:"",                              h:95,  unite:""},
+  {id:"passagers",  titre:"Passagers",    sub:"",                              h:320, unite:"pax"},
+];
+const HMACHINE = 205;
+
+const uid = () => Math.random().toString(36).slice(2,9);
+const PLANCHE_NOM_OK = p => ["FT10","FT15","HES"].includes(p);
+
+/* ================= catalogue ================= */
+const SEED = 3;
+const CAT_MACHINE = [
+  ["DDJ x2", 98, "+2 °C en entrée de courbe"],
+  ["BLU + PR4G + PLS", 40, ""],
+  ["DRAX33", 8, ""],
+  ["Chargeur C615 plein", 13, ""],
+  ["Paire de boomerang", 12, ""],
+  ["Caisse lot de bord", 50, ""],
+  ["Bâche de cabine", 8, ""],
+  ["Lot de bâchage", 17, ""],
+  ["Blindage 2 portes + cabine", 61, ""],
+];
+const CATALOGUE = {
+  equipage:[["Équipage total", 480, 1], ["Allégement", 0, 1]],
+  soute:[["Civière",8],["Caisse MVAVT",10],["Bidon",24],["Support 5e bidon",15],
+         ["Batterie maintenance + secours",44],["Rations x8",12],["Eau 4 packs + filet",38],
+         ["Quadri",14],["Lot montagne collectif",20],["Lot montagne individuel",9],
+         ["Barre de remorquage",44]],
+  aero:[["Lot AERO sans seuils",49],["Seuil de porte",12],["Corde lisse courte",26],
+        ["Corde lisse longue",41],["Grappe",20],["Leg bag",12],["Lot sanitaire",25]],
+  treuil:[["Treuil hydraulique",43],["UC treuil",19],["Charge inerte",80]],
+  armement:[["LPH MAG58",22],["MAG58",16],["Caisson 7,62 mm (230 cps)",8],
+            ["AT4CS + pot thermique",8],["Platine SH20",141],["Canon complet (avec tube)",49.5],
+            ["Caisson 20 mm plein avec couloir",100],["Caisson 20 mm vide avec couloir",21],
+            ["Tube canon",19]],
+  divers:[["GMP kéro",75],["30 m de flexibles",50],["Caisse matériel SEO",35],
+          ["Canot 10 places",55],["Canot 6 places",40],["Dispositif de décrassage",20],
+          ["Autres",110]],
+  passagers:[["Passager",90]],
+};
+const seedBloc = id => (CATALOGUE[id]||[]).map(([n,p,q])=>({
+  id:uid(), nom:n, poids:String(p), qte:String(q??0),
+  ...(id === "soute" && /^bidon/i.test(n) ? {bidon:true} : {})}));
+
+const ligne = (nom="", poids="", qte=1) => ({id:uid(), nom, poids, qte});
+
+function etatNeuf(){
+  return {
+    v:3, seed:SEED,
+    nomMachine:"Machine",
+    mve:"5713",
+    machine:CAT_MACHINE.map(([n,p,note])=>({id:uid(), nom:n, poids:String(p), note, etat:"non"})),
+    blocs:Object.fromEntries(BLOCS.map(b=>[b.id, seedBloc(b.id)])),
+    ouverts:{machine:true, lz0:true},
+    lz:[0,1,2,3].map(i=>({nom:"LZ "+(i+1), alt:"", qnh:"1013", oat:"", ddj:false, mpai:"ouvertes"})),
+    regimes:[1,2,3].map(i=>({nom:"Régime "+i, kt:"", conso:""})),
+    carb:{miseRoute:"", coupureNb:"", coupureKg:"", secuPcb:"", secuMini:""},
+    branches:[{id:uid(), nom:"Branche 1", lzA:0, lzB:1, regime:0, dist:"", unite:"nm",
+               planA:"HES", planB:"HES", pax:"", onsta:false, ostRegime:0, playtime:""}],
+  };
+}
+
+let S = etatNeuf();
+
+/* ================= stockage ================= */
+const K_ETAT = "eos.etat", K_CFG = "eos.configs";
+function lire(k, def){
+  try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : def; }
+  catch(e){ return def; }
+}
+function ecrire(k, v){
+  try { localStorage.setItem(k, JSON.stringify(v)); return true; }
+  catch(e){ return false; }
+}
+let stockageOK = true;
+function sauverEtat(){ stockageOK = ecrire(K_ETAT, S); }
+
+function fusionner(brut){
+  const n = etatNeuf();
+  if (!brut || typeof brut !== "object") return n;
+  const vieux = (brut.seed ?? 0) < SEED;   /* saisie anterieure au catalogue : on la remplace si elle est vide */
+  n.mve = (brut.mve === "" && vieux) ? n.mve : (brut.mve ?? "");
+  n.nomMachine = brut.nomMachine || "Machine";
+  if (Array.isArray(brut.machine) && brut.machine.length && !(vieux && brut.machine.every(m=>!num(m.poids))))
+    n.machine = brut.machine.map(m=>({id:m.id||uid(), nom:m.nom||"", poids:m.poids??"", note:m.note||"",
+                                      etat:["non","monte","mve"].includes(m.etat) ? m.etat : (m.monte ? "monte" : "non")}));
+  for (const b of BLOCS)
+    if (Array.isArray(brut.blocs?.[b.id]) && brut.blocs[b.id].length)
+      n.blocs[b.id] = brut.blocs[b.id].map(l=>({id:l.id||uid(), nom:l.nom||"", poids:l.poids??"",
+                                                qte:l.qte??0, ...(l.bidon ? {bidon:true} : {})}));
+  /* saisies antérieures au drapeau : on le pose une fois, d'après le libellé */
+  if (!n.blocs.soute.some(l=>l.bidon)){
+    const cible = n.blocs.soute.find(l=>/^\s*bidon/i.test(l.nom || ""));
+    if (cible) cible.bidon = true;
+  }
+  if (brut.ouverts) n.ouverts = brut.ouverts;
+  if (brut.carb && typeof brut.carb === "object")
+    for (const k of ["miseRoute","coupureNb","coupureKg","secuPcb","secuMini"])
+      n.carb[k] = brut.carb[k] ?? "";
+  if (Array.isArray(brut.branches) && brut.branches.length){
+    const d = n.branches[0];
+    n.branches = brut.branches.slice(0, 12).map((s,i)=>({
+      id:s.id||uid(), nom:s.nom || ("Branche " + (i+1)),
+      lzA:Number.isInteger(s.lzA)?s.lzA:d.lzA, lzB:Number.isInteger(s.lzB)?s.lzB:d.lzB,
+      regime:Number.isInteger(s.regime)?s.regime:d.regime, dist:s.dist??"", unite:s.unite==="km"?"km":"nm",
+      planA:PLANCHE_NOM_OK(s.planA)?s.planA:d.planA, planB:PLANCHE_NOM_OK(s.planB)?s.planB:d.planB,
+      pax:s.pax??"", onsta:!!s.onsta,
+      ostRegime:Number.isInteger(s.ostRegime)?s.ostRegime:0, playtime:s.playtime??""}));
+  }
+  if (Array.isArray(brut.regimes)) brut.regimes.slice(0,3).forEach((g,i)=>{
+    n.regimes[i] = {nom:g.nom || ("Régime "+(i+1)), kt:g.kt ?? "", conso:g.conso ?? ""};
+  });
+  if (Array.isArray(brut.lz)) brut.lz.slice(0,4).forEach((z,i)=>{
+    n.lz[i] = {nom:z.nom||("LZ "+(i+1)), alt:z.alt??"", qnh:z.qnh??"1013", oat:z.oat??"",
+               ddj:!!z.ddj, mpai:(PEN_MPAI[z.mpai ?? z.eap]!==undefined ? (z.mpai ?? z.eap) : "ouvertes")};
+  });
+  return n;
+}
+
+/* ================= calculs config ================= */
+const num = v => { const x = parseFloat(String(v).replace(",", ".")); return isFinite(x) ? x : 0; };
+const fmt = (v,d=0) => v.toLocaleString("fr-FR",{minimumFractionDigits:d, maximumFractionDigits:d});
+
+const totalMachine = () => S.machine.reduce((s,m)=> s + (m.etat === "monte" ? num(m.poids) : 0), 0);
+const totalBloc = id => S.blocs[id].reduce((s,l)=> s + num(l.poids)*num(l.qte), 0);
+const totalCharge = () => BLOCS.reduce((s,b)=> s + totalBloc(b.id), 0);
+const masseEquipee = () => num(S.mve) + totalMachine() + totalCharge();
+
+/* ================= rendu : config ================= */
+const el = (h) => { const d=document.createElement("div"); d.innerHTML=h.trim(); return d.firstElementChild; };
+const esc = s => String(s).replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+function rendreConfig(){
+  const v = document.getElementById("v-config");
+  v.innerHTML = "";
+
+  /* machine */
+  const nb = S.machine.filter(m=>m.etat==="monte").length;
+  const nbMve = S.machine.filter(m=>m.etat==="mve").length;
+  const m = el(`<details class="bloc" style="--h:${HMACHINE}" ${S.ouverts.machine?"open":""} data-k="machine">
+    <summary><span class="chev"></span>
+      <div><input class="blocname" type="text" value="${esc(S.nomMachine)}" aria-label="Nom de la machine">
+        <div class="sub">${nb} monté${nb>1?"s":""}${nbMve?` · ${nbMve} inclus MVE`:""} sur ${S.machine.length}</div></div>
+      <span class="btot">${fmt(num(S.mve)+totalMachine())} kg</span></summary>
+    <div class="body">
+      <div class="mve">
+        <label for="mve">Masse à vide équipée<small>relevé de pesée, hors équipements optionnels</small></label>
+        <input id="mve" type="number" inputmode="decimal" placeholder="0" value="${esc(S.mve)}">
+      </div>
+      <div class="rows"></div>
+      <button class="add" data-add="machine">Ajouter un équipement</button>
+    </div></details>`);
+  const mr = m.querySelector(".rows");
+  S.machine.forEach(it=>{
+    const r = el(`<div class="mrow">
+      <input class="nom" type="text" placeholder="Équipement" value="${esc(it.nom)}">
+      ${it.note?`<div class="tag">${esc(it.note)}</div>`:""}
+      <div class="line">
+        <span class="kgf"><input type="number" inputmode="decimal" placeholder="0" value="${esc(it.poids)}"></span>
+        <span></span>
+        <button class="del" aria-label="Supprimer">×</button></div>
+      <div class="tri">
+        <button data-e="non"   aria-pressed="${it.etat==="non"}">Non monté</button>
+        <button data-e="monte" aria-pressed="${it.etat==="monte"}">Monté</button>
+        <button data-e="mve"   aria-pressed="${it.etat==="mve"}">Inclus MVE</button></div></div>`);
+    const nom = r.querySelector("input[type=text]"), poids = r.querySelector("input[type=number]");
+    nom.oninput   = e => { it.nom = e.target.value; sauverEtat(); };
+    poids.oninput = e => { it.poids = e.target.value; majTotaux(); sauverEtat(); };
+    r.querySelectorAll("[data-e]").forEach(bt=>{
+      bt.onclick = () => { it.etat = bt.dataset.e; rendreConfig(); sauverEtat(); };
+    });
+    r.querySelector(".del").onclick = () => { S.machine = S.machine.filter(x=>x!==it); rendreConfig(); sauverEtat(); };
+    mr.appendChild(r);
+  });
+  m.querySelector("#mve").oninput = e => { S.mve = e.target.value; majTotaux(); sauverEtat(); };
+  const bn = m.querySelector(".blocname");
+  bn.onclick = e => e.preventDefault();
+  bn.onkeydown = e => e.stopPropagation();
+  bn.oninput = e => { S.nomMachine = e.target.value; sauverEtat(); };
+  v.appendChild(m);
+
+  /* blocs */
+  for (const b of BLOCS){
+    const lignes = S.blocs[b.id];
+    const d = el(`<details class="bloc" style="--h:${b.h}" ${S.ouverts[b.id]?"open":""} data-k="${b.id}">
+      <summary><span class="chev"></span>
+        <div><h2>${b.titre}</h2>${b.sub?`<div class="sub">${b.sub}</div>`:""}</div>
+        <span class="btot">${fmt(totalBloc(b.id))} kg</span></summary>
+      <div class="body">
+        <div class="rows"></div>
+        <button class="add" data-add="${b.id}">Ajouter une ligne</button>
+      </div></details>`);
+    const rows = d.querySelector(".rows");
+    if (!lignes.length) rows.appendChild(el(`<div class="vide">Aucune ligne.</div>`));
+    lignes.forEach(l=>{
+      const r = el(`<div class="row">
+        <input class="nom" type="text" placeholder="Désignation" value="${esc(l.nom)}">
+        ${l.bidon ? `<div class="tag">+${BIDON_KG} kg de capacité carburant, ${BIDON_MAX} maxi</div>` : ""}
+        <div class="line">
+          <span class="kgf"><input type="number" inputmode="decimal" placeholder="0" value="${esc(l.poids)}"></span>
+          <span class="x">×</span>
+          <span class="step"><button data-s="-1" aria-label="Retirer un">−</button>
+            <input type="number" inputmode="numeric" placeholder="0" value="${esc(l.qte)}">
+            <button data-s="1" aria-label="Ajouter un">+</button></span>
+          <span class="calc">${fmt(num(l.poids)*num(l.qte))}<small>kg</small></span>
+          <button class="del" aria-label="Supprimer">×</button></div></div>`);
+      r.querySelectorAll("[data-s]").forEach(bt=>{
+        bt.onclick = () => {
+          l.qte = String(Math.max(0, num(l.qte) + Number(bt.dataset.s)));
+          r.querySelectorAll("input")[2].value = l.qte;
+          r.querySelector(".calc").innerHTML = fmt(num(l.poids)*num(l.qte))+"<small>kg</small>";
+          majTotaux(); sauverEtat();
+        };
+      });
+      const ins = r.querySelectorAll("input");
+      ins[0].oninput = e => { l.nom = e.target.value; sauverEtat(); };
+      ins[1].oninput = e => { l.poids = e.target.value; r.querySelector(".calc").innerHTML = fmt(num(l.poids)*num(l.qte))+"<small>kg</small>"; majTotaux(); sauverEtat(); };
+      ins[2].oninput = e => { l.qte = e.target.value; r.querySelector(".calc").innerHTML = fmt(num(l.poids)*num(l.qte))+"<small>kg</small>"; majTotaux(); sauverEtat(); };
+      r.querySelector(".del").onclick = () => { S.blocs[b.id] = lignes.filter(x=>x!==l); rendreConfig(); sauverEtat(); };
+      rows.appendChild(r);
+    });
+    v.appendChild(d);
+  }
+
+  v.querySelectorAll("details").forEach(d=>{
+    d.addEventListener("toggle", ()=>{ S.ouverts[d.dataset.k] = d.open; sauverEtat(); });
+  });
+  majTotaux();
+  v.querySelectorAll("[data-add]").forEach(btn=>{
+    btn.onclick = () => {
+      const k = btn.dataset.add;
+      if (k === "machine") S.machine.push({id:uid(), nom:"", poids:"", note:"", etat:"monte"});
+      else S.blocs[k].push(ligne());
+      S.ouverts[k] = true; rendreConfig(); sauverEtat();
+    };
+  });
+
+  /* configurations enregistrées */
+  v.appendChild(el(`<div class="sep"></div><p class="h3">Configurations enregistrées</p>`));
+  const tools = el(`<div class="tools">
+    <button id="b-save">Enregistrer sous…</button>
+    <button id="b-export">Exporter un fichier</button>
+    <button id="b-import">Importer un fichier</button>
+    <button id="b-reset">Tout effacer</button></div>`);
+  v.appendChild(tools);
+  const liste = el(`<div class="cfglist"></div>`);
+  const cfgs = lire(K_CFG, []);
+  if (!cfgs.length) liste.appendChild(el(`<div class="vide">Aucune configuration enregistrée. « Enregistrer sous… » garde la saisie en cours sous un nom.</div>`));
+  cfgs.forEach((c,i)=>{
+    const row = el(`<div class="cfg"><span class="nm">${esc(c.nom)}</span><span class="dt">${esc(c.date)}</span>
+      <button data-a="load">Charger</button><button data-a="del">Supprimer</button></div>`);
+    row.querySelector('[data-a="load"]').onclick = () => {
+      if (!confirm(`Charger « ${c.nom} » ? La saisie en cours sera remplacée.`)) return;
+      S = fusionner(c.etat); sauverEtat(); rendreConfig(); rendrePerfo(); majTotaux();
+    };
+    row.querySelector('[data-a="del"]').onclick = () => {
+      if (!confirm(`Supprimer « ${c.nom} » ?`)) return;
+      const l = lire(K_CFG, []); l.splice(i,1); ecrire(K_CFG, l); rendreConfig();
+    };
+    liste.appendChild(row);
+  });
+  v.appendChild(liste);
+  if (!stockageOK)
+    v.appendChild(el(`<div class="alerte">Ce navigateur refuse la sauvegarde locale. Utilisez « Exporter un fichier » pour conserver vos configurations.</div>`));
+  v.appendChild(el(`<p class="note">Les configurations restent sur cet appareil. Pour en transmettre une, exportez le fichier et envoyez-le.</p>`));
+
+  tools.querySelector("#b-save").onclick = () => {
+    const nom = prompt("Nom de la configuration :", "");
+    if (!nom) return;
+    const l = lire(K_CFG, []);
+    const i = l.findIndex(c=>c.nom===nom);
+    const e = {nom, date:new Date().toLocaleDateString("fr-FR"), etat:S};
+    if (i>=0){ if (!confirm(`« ${nom} » existe déjà. La remplacer ?`)) return; l[i]=e; } else l.unshift(e);
+    if (!ecrire(K_CFG, l)) alert("Sauvegarde impossible sur ce navigateur. Exportez un fichier à la place.");
+    rendreConfig();
+  };
+  tools.querySelector("#b-export").onclick = () => {
+    const blob = new Blob([JSON.stringify({app:"EOS", v:VERSION, etat:S, configs:lire(K_CFG,[])}, null, 1)],
+                          {type:"application/json"});
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "eos-config-" + new Date().toISOString().slice(0,10) + ".json";
+    a.click(); setTimeout(()=>URL.revokeObjectURL(a.href), 4000);
+  };
+  tools.querySelector("#b-import").onclick = () => {
+    const f = document.createElement("input"); f.type = "file"; f.accept = ".json,application/json";
+    f.onchange = () => {
+      const file = f.files[0]; if (!file) return;
+      const r = new FileReader();
+      r.onload = () => {
+        try {
+          const d = JSON.parse(r.result);
+          if (!d.etat) throw new Error("fichier sans configuration");
+          S = fusionner(d.etat);
+          if (Array.isArray(d.configs) && d.configs.length && confirm("Importer aussi les configurations enregistrées du fichier ?"))
+            ecrire(K_CFG, d.configs.concat(lire(K_CFG,[])));
+          sauverEtat(); rendreConfig(); rendrePerfo(); majTotaux();
+        } catch(e){ alert("Fichier illisible : " + e.message); }
+      };
+      r.readAsText(file);
+    };
+    f.click();
+  };
+  tools.querySelector("#b-reset").onclick = () => {
+    if (!confirm("Effacer la saisie en cours ? Les configurations enregistrées sont conservées.")) return;
+    S = etatNeuf(); sauverEtat(); rendreConfig(); rendrePerfo(); majTotaux();
+  };
+}
+
+/* ================= rendu : perfos ================= */
+/* DDJ declares en Config : montes ou deja comptes dans la MVE */
+const ddjEnConfig = () => S.machine.some(m => /ddj/i.test(m.nom) && (m.etat === "monte" || m.etat === "mve"));
+
+const NOMS = {FT10:"Stationnaire DES 10 ft", FT15:"Stationnaire DES 15 ft", HES:"Stationnaire HES"};
+
+function rendrePerfo(){
+  const v = document.getElementById("v-perfo");
+  v.innerHTML = "";
+  v.appendChild(el(`<p class="note">Masse maximale au décollage, 2 GTM, régime de décollage ou couple maxi 100 %, sans prélèvement P2, vent nul.</p>`));
+
+  S.lz.forEach((lz,i)=>{
+    const h = [205,168,38,320][i];
+    const r = calculLZ(lz);
+    const saisi = lz.alt !== "" || lz.oat !== "";
+    const d = el(`<details class="lz" style="--h:${h}" ${S.ouverts["lz"+i]?"open":""} data-k="lz${i}">
+      <summary><span class="chev"></span>
+        <input class="lzname" type="text" value="${esc(lz.nom)}" aria-label="Nom de la zone">
+        <span class="lzres">${saisi?fmt(r.planches.HES.masse)+" kg":"—"}<em>HES</em></span></summary>
+      <div class="body"></div></details>`);
+    const b = d.querySelector(".body");
+
+    const champ = (lab, sous, key, ph, step) => {
+      const f = el(`<div class="frm"><label>${lab}${sous?`<small>${sous}</small>`:""}</label>
+        <input type="number" inputmode="decimal" placeholder="${ph}" value="${esc(lz[key])}" step="${step||1}"></div>`);
+      f.querySelector("input").oninput = e => { lz[key] = e.target.value; majPerfo(i); sauverEtat(); };
+      return f;
+    };
+    b.appendChild(champ("Altitude", "lue au QNH, en pieds", "alt", "0"));
+    b.appendChild(champ("QNH", "hPa", "qnh", "1013"));
+    b.appendChild(champ("Température extérieure", "°C", "oat", "15"));
+
+    const segDDJ = el(`<div class="frm stack"><label>Déviateurs de jet<small>+2 °C en entrée de courbe</small></label>
+      <div class="seg"><button aria-pressed="${!lz.ddj}">Non</button><button aria-pressed="${lz.ddj}">Oui</button></div></div>`);
+    const bd = segDDJ.querySelectorAll("button");
+    bd[0].onclick = () => { lz.ddj = false; majPerfo(i); sauverEtat(); };
+    bd[1].onclick = () => { lz.ddj = true;  majPerfo(i); sauverEtat(); };
+    b.appendChild(segDDJ);
+
+    const segMPAI = el(`<div class="frm stack"><label>MPAI<small>fermées : −2 % sur la lecture</small></label>
+      <div class="seg">
+        <button aria-pressed="${lz.mpai==="ouvertes"}">Ouvertes</button>
+        <button aria-pressed="${lz.mpai==="fermees"}">Fermées</button></div></div>`);
+    ["ouvertes","fermees"].forEach((k,j)=>{
+      segMPAI.querySelectorAll("button")[j].onclick = () => { lz.mpai = k; majPerfo(i); sauverEtat(); };
+    });
+    b.appendChild(segMPAI);
+
+    b.appendChild(el(`<div class="sortie"></div>`));
+    v.appendChild(d);
+    dessinerSortie(d.querySelector(".sortie"), lz, r);
+  });
+
+  v.querySelectorAll("details").forEach(d=>{
+    d.addEventListener("toggle", ()=>{ S.ouverts[d.dataset.k] = d.open; sauverEtat(); });
+  });
+  v.querySelectorAll(".lzname").forEach((inp,i)=>{
+    inp.onclick = e => e.preventDefault();
+    inp.onkeydown = e => e.stopPropagation();
+    inp.oninput = e => { S.lz[i].nom = e.target.value; sauverEtat(); };
+  });
+}
+
+function dessinerSortie(box, lz, r){
+  box.innerHTML = "";
+  if (lz.alt === "" && lz.oat === ""){
+    box.appendChild(el(`<p class="note" style="margin:10px 0 0">Renseignez l'altitude et la température pour obtenir les masses.</p>`));
+    return;
+  }
+  const lignes = ["FT10","FT15","HES"].map(p=>{
+    const x = r.planches[p];
+    return `<tr><td>${NOMS[p]}</td>
+      <td class="lu">${fmt(x.lue)}${x.hors?"+":""}</td>
+      <td class="m">${fmt(x.masse)}</td></tr>`;
+  }).join("");
+  box.appendChild(el(`<table class="res">
+    <thead><tr><th>Planche</th><th>Lecture</th><th>Masse max</th></tr></thead>
+    <tbody>${lignes}</tbody></table>`));
+
+  const depasse = lz.oat !== "" && num(lz.oat) > r.oatMax;
+  box.appendChild(el(`<div class="lim">
+    <span class="l">Température maxi admissible</span>
+    <span class="v" style="color:${depasse ? "var(--bad)" : "var(--ink)"}">${fmt(r.oatMax,1)} °C</span></div>`));
+
+  const bits = [`Zp ${fmt(r.zp)} ft`, `ISA ${fmt(r.isa,1)} °C`,
+                `entrée de courbe ${fmt(r.tEnt,1)} °C`];
+  if (r.pen) bits.push(`pénalité ${r.pen} %`);
+  if (r.tEnt > 40) bits.push("au-delà de l'isotherme +40 : extrapolé");
+  box.appendChild(el(`<div class="flag">${bits.join(" · ")}</div>`));
+
+  const enCfg = ddjEnConfig();
+  if (enCfg !== !!lz.ddj)
+    box.appendChild(el(`<div class="alerte">DDJ ${enCfg?"déclarés en Config mais non pris ici":"pris ici mais non déclarés en Config"}. Vérifiez lequel correspond à la machine.</div>`));
+  r.alertes.forEach(a=> box.appendChild(el(`<div class="alerte">${a}</div>`)));
+}
+
+function majPerfo(i){
+  const d = document.querySelectorAll("#v-perfo details")[i];
+  if (!d) return;
+  const lz = S.lz[i], r = calculLZ(lz);
+  const saisi = lz.alt !== "" || lz.oat !== "";
+  d.querySelector(".lzres").innerHTML = (saisi?fmt(r.planches.HES.masse)+" kg":"—") + "<em>HES</em>";
+  d.querySelectorAll(".seg").forEach((seg,k)=>{
+    const b = seg.querySelectorAll("button");
+    if (k===0){ b[0].setAttribute("aria-pressed", !lz.ddj); b[1].setAttribute("aria-pressed", lz.ddj); }
+    else ["ouvertes","fermees"].forEach((v,j)=> b[j].setAttribute("aria-pressed", lz.mpai===v));
+  });
+  dessinerSortie(d.querySelector(".sortie"), lz, r);
+}
+
+/* ================= rendu : mission ================= */
+const PLANCHE_NOM = {FT10:"DES 10 ft", FT15:"DES 15 ft", HES:"HES"};
+const HUES_BR = [150, 205, 265, 38, 320, 168];
+
+function lzRenseignee(i){ const z = S.lz[i]; return z && (z.alt !== "" || z.oat !== ""); }
+function regimeOK(i){ const g = S.regimes[i]; return g && num(g.kt) > 0 && num(g.conso) > 0; }
+
+function brancheNeuve(depart){
+  return {id:uid(), nom:"Branche " + (S.branches.length + 1), lzA:depart, lzB:depart,
+          regime:0, dist:"", unite:"nm", planA:"HES", planB:"HES", pax:"",
+          onsta:false, ostRegime:0, playtime:""};
+}
+
+/* départ d'une branche : libre pour la première, sinon l'arrivée de la précédente */
+function departDe(i){ return i === 0 ? S.branches[0].lzA : S.branches[i-1].lzB; }
+
+/* consommations seules : ne dépendent d'aucune masse, donc calculables d'abord */
+function consoBranche(b){
+  const g = S.regimes[b.regime] || {kt:"", conso:""};
+  const kt = num(g.kt), ch = num(g.conso);
+  const distNm = b.unite === "km" ? num(b.dist) / 1.852 : num(b.dist);
+  const h = kt > 0 ? distNm / kt : 0;
+  const conso = h * ch;
+  const gO = S.regimes[b.ostRegime] || {conso:""};
+  const consoPT = b.onsta ? num(gO.conso) * num(b.playtime) / 60 : 0;
+  return {g, kt, ch, distNm, minutes:h*60, conso, consoPT, nec:conso + consoPT};
+}
+
+function necMission(){
+  return S.branches.reduce((s,b)=> s + consoBranche(b).nec, 0);
+}
+
+/* carburant à bord au décollage de la première branche :
+   le total des réservoirs moins la mise en route, déjà consommée au sol */
+function keroDecollage(){
+  const k = S.carb;
+  return necMission() + num(k.coupureNb) * num(k.coupureKg) + num(k.secuPcb) + num(k.secuMini);
+}
+
+/* chaîne complète : chaque branche part de l'état laissé par la précédente */
+function calculMission(){
+  const config = masseEquipee();
+  const maxLZ = (i, pl) => lzRenseignee(i) ? calculLZ(S.lz[i]).planches[pl].masse : null;
+  let brule = 0;
+
+  return S.branches.map((b,i)=>{
+    const x = consoBranche(b);
+    const iA = departDe(i), iB = b.lzB;
+    const maxA = maxLZ(iA, b.planA), maxB = maxLZ(iB, b.planB);
+
+    const keroDebut = keroDecollage() - brule;
+    const pax = num(b.pax);
+    const deco = config + pax + keroDebut;
+    const poser = deco - x.conso;
+    brule += x.conso;
+
+    let onsta = null;
+    if (b.onsta){
+      const reelleFin = poser - x.consoPT;
+      brule += x.consoPT;
+      onsta = {consoPT:x.consoPT, reelleDebut:poser, reelleFin,
+               offDebut: maxB === null ? null : maxB - poser,
+               offFin:   maxB === null ? null : maxB - reelleFin};
+    }
+
+    return {...x, iA, iB, maxA, maxB, config, pax, keroDebut, deco, poser,
+            keroFin: keroDebut - x.conso - x.consoPT,
+            decoMaxParPoser: maxB === null ? null : maxB + x.conso, onsta};
+  });
+}
+
+function rendreMission(){
+  const v = document.getElementById("v-miss");
+  v.innerHTML = "";
+  const tout = calculMission();
+
+  /* prérequis */
+  const manque = new Set();
+  S.branches.forEach((b,i)=>{
+    if (!regimeOK(b.regime)) manque.add("un régime dans Paramètres");
+    if (!lzRenseignee(departDe(i)) || !lzRenseignee(b.lzB)) manque.add("les zones dans Perfos");
+    if (b.onsta && !regimeOK(b.ostRegime)) manque.add("le régime ONSTA dans Paramètres");
+  });
+  if (manque.size)
+    v.appendChild(el(`<div class="manque">À renseigner avant que la mission se calcule : ${[...manque].join(", ")}.</div>`));
+
+  /* bandeau d'alertes : conteneur fixe, rafraîchi aussi pendant la saisie */
+  v.appendChild(el(`<div id="bandeauAlertes"></div>`));
+  majBandeau(tout);
+
+  S.branches.forEach((b,i)=> v.appendChild(blocBranche(b, i, tout[i])));
+
+  /* ajout / retrait */
+  const tools = el(`<div class="tools"><button id="b-add-br">Ajouter une branche</button></div>`);
+  tools.querySelector("#b-add-br").onclick = () => {
+    S.branches.push(brancheNeuve(S.branches[S.branches.length-1].lzB));
+    S.ouverts["br" + (S.branches.length-1)] = true;
+    rendreMission(); sauverEtat();
+  };
+  v.appendChild(tools);
+
+  /* récapitulatif */
+  if (S.branches.length > 1){
+    const t = tout.reduce((s,c)=>({min:s.min + c.minutes + (c.onsta?num(S.branches[tout.indexOf(c)].playtime):0),
+                                   nm:s.nm + c.distNm, kg:s.kg + c.nec}), {min:0, nm:0, kg:0});
+    const der = tout[tout.length-1];
+    const finale = der.onsta ? der.onsta.reelleFin : der.poser;
+    v.appendChild(el(`<div class="sep"></div><p class="h3">Mission complète</p>
+      <table class="res"><tbody>
+        <tr><td>Distance totale</td><td class="m">${fmt(t.nm)} Nm</td></tr>
+        <tr><td>Temps total</td><td class="m">${fmt(t.min)} min</td></tr>
+        <tr><td>Carburant consommé</td><td class="m">${fmt(t.kg)} kg</td></tr>
+        <tr><td>Masse en fin de mission</td><td class="m">${fmt(finale)} kg</td></tr>
+        <tr><td>Carburant restant</td><td class="m">${fmt(der.keroFin)} kg</td></tr>
+      </tbody></table>`));
+  }
+}
+
+/* reprend en tête toutes les alertes des branches */
+function majBandeau(tout){
+  const box = document.getElementById("bandeauAlertes");
+  if (!box) return;
+  const liste = [];
+  S.branches.forEach((b,i)=> alertesBranche(b, tout[i]).forEach(a => liste.push(`${b.nom} — ${a}`)));
+  box.innerHTML = liste.length
+    ? `<div class="erreurs">${liste.map(a=>`<p>${esc(a)}</p>`).join("")}</div>` : "";
+}
+
+function blocBranche(b, i, c){
+  const h = HUES_BR[i % HUES_BR.length];
+  const iA = departDe(i), premier = i === 0;
+  const d = el(`<details class="bloc" style="--h:${h}" ${S.ouverts["br"+i]!==false?"open":""} data-k="br${i}">
+    <summary><span class="chev"></span>
+      <input class="blocname" type="text" value="${esc(b.nom)}" aria-label="Nom de la branche" style="width:9em">
+      <span class="btot">${c.minutes ? fmt(c.minutes) + " min" : "—"}</span>
+      ${S.branches.length > 1 ? `<button class="delbr" aria-label="Supprimer la branche">×</button>` : ""}</summary>
+    <div class="body">
+      <div class="trajet">
+        ${premier ? `<select class="sA" aria-label="Zone de départ"></select>`
+                  : `<span class="fixe">${esc(S.lz[iA].nom)}</span>`}
+        <span class="fl">→</span>
+        <select class="sB" aria-label="Zone d'arrivée"></select>
+      </div>
+      ${premier ? "" : `<div class="flag" style="text-align:left;margin:-4px 0 8px">Départ repris de la branche précédente.</div>`}
+      <div class="frm stack"><label>Vitesse</label><select class="sR" aria-label="Régime"></select></div>
+      <div class="frm stack"><label>Distance</label>
+        <div class="dist">
+          <span class="unf" data-u="${b.unite === "km" ? "km" : "Nm"}">
+            <input class="iD" type="number" inputmode="decimal" placeholder="0" value="${esc(b.dist)}"></span>
+          <div class="seg">
+            <button data-u="nm" aria-pressed="${b.unite !== "km"}">Nm</button>
+            <button data-u="km" aria-pressed="${b.unite === "km"}">km</button></div>
+        </div></div>
+      <div class="frm stack"><label>Planche à la zone de départ</label>
+        <div class="seg sPA">
+          <button data-p="FT10" aria-pressed="${b.planA === "FT10"}">DES 10 ft</button>
+          <button data-p="FT15" aria-pressed="${b.planA === "FT15"}">DES 15 ft</button>
+          <button data-p="HES"  aria-pressed="${b.planA === "HES"}">HES</button></div></div>
+      <div class="frm stack"><label>Planche à la zone d'arrivée</label>
+        <div class="seg sPB">
+          <button data-p="FT10" aria-pressed="${b.planB === "FT10"}">DES 10 ft</button>
+          <button data-p="FT15" aria-pressed="${b.planB === "FT15"}">DES 15 ft</button>
+          <button data-p="HES"  aria-pressed="${b.planB === "HES"}">HES</button></div></div>
+      <div class="frm"><label>Masse PAX<small>à bord sur cette branche</small></label>
+        <span class="unf" data-u="kg"><input class="iP" type="number" inputmode="decimal" placeholder="0" value="${esc(b.pax)}"></span></div>
+      <div class="frm stack"><label>Sur zone à l'arrivée</label>
+        <div class="seg sO">
+          <button data-o="0" aria-pressed="${!b.onsta}">Transit seul</button>
+          <button data-o="1" aria-pressed="${b.onsta}">ONSTA</button></div></div>
+      <div class="ost"></div>
+      <div class="sortieM"></div>
+    </div></details>`);
+
+  const opt = (sel, liste, courant) => {
+    sel.innerHTML = liste.map((t,k)=>`<option value="${k}" ${k===courant?"selected":""}>${esc(t)}</option>`).join("");
+  };
+  const nomsLZ = S.lz.map((z,k)=> z.nom + (lzRenseignee(k) ? "" : " (vide)"));
+  const nomsR  = S.regimes.map((g,k)=> g.nom + (regimeOK(k) ? ` · ${fmt(num(g.kt))} kt` : " (vide)"));
+  if (premier) opt(d.querySelector(".sA"), nomsLZ, b.lzA);
+  opt(d.querySelector(".sB"), nomsLZ, b.lzB);
+  opt(d.querySelector(".sR"), nomsR,  b.regime);
+
+  const maj  = () => { rendreMission(); sauverEtat(); };
+  const majS = () => { rendreMission(); sauverEtat(); };   /* la chaîne aval change aussi */
+  const majLocal = () => {                                  /* frappe : résultats seuls */
+    const tout = calculMission();
+    majBandeau(tout);
+    S.branches.forEach((bb,k)=>{
+      const dd = document.querySelectorAll("#v-miss details")[k];
+      if (!dd) return;
+      dd.querySelector(".btot").textContent = tout[k].minutes ? fmt(tout[k].minutes) + " min" : "—";
+      dessinerMission(dd.querySelector(".sortieM"), bb, tout[k]);
+    });
+    sauverEtat();
+  };
+
+  if (premier) d.querySelector(".sA").onchange = e => { b.lzA = +e.target.value; maj(); };
+  d.querySelector(".sB").onchange = e => { b.lzB = +e.target.value; maj(); };
+  d.querySelector(".sR").onchange = e => { b.regime = +e.target.value; maj(); };
+  const bn = d.querySelector(".blocname");
+  bn.onclick = e => e.preventDefault();
+  bn.onkeydown = e => e.stopPropagation();
+  bn.oninput = e => { b.nom = e.target.value; sauverEtat(); };
+  d.querySelector(".iD").oninput = e => { b.dist = e.target.value; majLocal(); };
+  d.querySelector(".iP").oninput = e => { b.pax = e.target.value; majLocal(); };
+  d.querySelectorAll("[data-u]").forEach(bt=>{ if (bt.tagName === "BUTTON")
+    bt.onclick = () => {
+      const u = bt.dataset.u;
+      if (u !== b.unite && b.dist !== ""){
+        const val = u === "km" ? num(b.dist) * 1.852 : num(b.dist) / 1.852;
+        b.dist = String(Math.round(val * 10) / 10).replace(/\.0$/, "");
+      }
+      b.unite = u; maj();
+    }; });
+  d.querySelectorAll(".sPA [data-p]").forEach(bt=> bt.onclick = () => { b.planA = bt.dataset.p; maj(); });
+  d.querySelectorAll(".sPB [data-p]").forEach(bt=> bt.onclick = () => { b.planB = bt.dataset.p; maj(); });
+  d.querySelectorAll(".sO [data-o]").forEach(bt=> bt.onclick = () => { b.onsta = bt.dataset.o === "1"; maj(); });
+  d.addEventListener("toggle", ()=>{ S.ouverts["br"+i] = d.open; sauverEtat(); });
+  const sup = d.querySelector(".delbr");
+  if (sup) sup.onclick = e => {
+    e.preventDefault(); e.stopPropagation();
+    if (!confirm(`Supprimer « ${b.nom} » ? Les branches suivantes se raccrocheront à la précédente.`)) return;
+    S.branches.splice(i, 1);
+    delete S.ouverts["br" + (S.branches.length)];
+    rendreMission(); sauverEtat();
+  };
+
+  if (b.onsta){
+    const ost = el(`<div style="margin-top:2px;padding-top:10px;border-top:1px solid var(--line)">
+      <div class="frm stack"><label>Régime sur zone</label><select class="sOR" aria-label="Régime ONSTA"></select></div>
+      <div class="frm"><label>Playtime</label>
+        <span class="unf" data-u="min"><input class="iPT" type="number" inputmode="numeric" placeholder="0" value="${esc(b.playtime)}"></span></div>
+    </div>`);
+    opt(ost.querySelector(".sOR"), S.regimes.map((g,k)=> g.nom + (regimeOK(k) ? ` · ${fmt(num(g.conso))} kg/h` : " (vide)")), b.ostRegime);
+    ost.querySelector(".sOR").onchange = e => { b.ostRegime = +e.target.value; maj(); };
+    ost.querySelector(".iPT").oninput = e => { b.playtime = e.target.value; majLocal(); };
+    d.querySelector(".ost").appendChild(ost);
+  }
+
+  dessinerMission(d.querySelector(".sortieM"), b, c);
+  return d;
+}
+
+function dessinerMission(box, b, c){
+  box.innerHTML = "";
+  const kg = x => x === null ? "—" : fmt(x) + " kg";
+  const nomA = S.lz[c.iA].nom, nomB = S.lz[c.iB].nom;
+  const off = v => v === null ? ["—", null]
+    : [(v < 0 ? "− " : "") + fmt(Math.abs(v)) + " kg", v < 0 ? "var(--bad)" : "var(--ok)"];
+
+  const rows = [
+    ["tit", "Vol"],
+    ["Temps de vol", c.minutes ? fmt(c.minutes) + " min" : "—", true],
+    ["Conso branche", c.conso ? fmt(c.conso) + " kg" : "—", true],
+    ["tit", "Chargement"],
+    ["Masse config", kg(c.config), false],
+    ["Masse PAX", kg(c.pax), false],
+    ["Carburant au départ", kg(c.keroDebut), false],
+    ["tit", "Départ · " + nomA],
+    [`Masse max · ${PLANCHE_NOM[b.planA]}`, kg(c.maxA), false],
+    ["Masse réelle décollage", kg(c.deco), true],
+    ["Masse offerte", ...off(c.maxA === null ? null : c.maxA - c.deco)],
+    ["tit", "Arrivée · " + nomB],
+    [`Masse max · ${PLANCHE_NOM[b.planB]}`, kg(c.maxB), false],
+    ["Masse réelle poser", kg(c.poser), true],
+    ["Masse offerte", ...off(c.maxB === null ? null : c.maxB - c.poser)],
+  ];
+
+  let prem = false;
+  const html = rows.map(r=>{
+    if (r[0] === "tit"){ prem = true; return `<tr class="tit"><td colspan="2">${esc(r[1])}</td></tr>`; }
+    const coul = (r[2] === true || r[2] === false) ? null : r[2];
+    const gras = r[2] === true;
+    const cl = prem ? "premier" : ""; prem = false;
+    return `<tr class="${cl}"><td>${esc(r[0])}</td><td class="${gras?"m":""}"${
+      coul?` style="color:${coul};font-weight:600"`:""}>${r[1]}</td></tr>`;
+  }).join("");
+  box.appendChild(el(`<table class="res"><tbody>${html}</tbody></table>`));
+
+  const o = c.onsta;
+  if (o){
+    const cel = (v, gras) => {
+      const [txt, coul] = Array.isArray(v) ? v : [v, null];
+      return `<td class="${gras?"m":""}"${coul?` style="color:${coul};font-weight:600"`:""}>${txt}</td>`;
+    };
+    box.appendChild(el(`<table class="res" style="margin-top:4px"><tbody>
+      <tr class="tit"><td colspan="3">Sur zone · playtime ${num(b.playtime) ? fmt(num(b.playtime)) + " min" : "—"} · ${o.consoPT ? fmt(o.consoPT) + " kg" : "—"}</td></tr>
+      <tr class="cols"><td></td><td>Début PT</td><td>Fin PT</td></tr>
+      <tr class="premier"><td>Masse réelle</td>${cel(kg(o.reelleDebut), true)}${cel(kg(o.reelleFin), true)}</tr>
+      <tr><td>Masse offerte</td>${cel(off(o.offDebut))}${cel(off(o.offFin))}</tr>
+      </tbody></table>`));
+  }
+
+  alertesBranche(b, c).forEach(a => box.appendChild(el(`<div class="alerte">${esc(a)}</div>`)));
+}
+
+/* alertes d'une branche, réutilisées telles quelles en tête d'onglet */
+function alertesBranche(b, c){
+  const nomA = S.lz[c.iA].nom, nomB = S.lz[c.iB].nom, o = c.onsta, a = [];
+  if (c.maxA !== null && c.deco > c.maxA)
+    a.push(`Masse au décollage ${fmt(c.deco)} kg au-dessus du maximum de ${nomA} (${fmt(c.maxA)} kg).`);
+  if (c.maxB !== null && c.poser > c.maxB)
+    a.push(`Masse au poser ${fmt(c.poser)} kg au-dessus du maximum de ${nomB} (${fmt(c.maxB)} kg).`);
+  if (o && c.maxB !== null && o.reelleFin > c.maxB)
+    a.push(`Masse en fin de playtime au-dessus du maximum de ${nomB}.`);
+  if (c.maxA !== null && c.decoMaxParPoser !== null && c.decoMaxParPoser < c.maxA)
+    a.push(`Le poser à ${nomB} bride le décollage : ${fmt(c.decoMaxParPoser)} kg au lieu de ${fmt(c.maxA)} kg, soit ${fmt(c.maxA - c.decoMaxParPoser)} kg de moins.`);
+  if (c.keroDebut < 0) a.push("Carburant épuisé avant cette branche.");
+  return a;
+}
+
+/* ================= carburant ================= */
+const CAPA_KERO = 1980;     /* reservoirs standards */
+const BIDON_KG  = 360;      /* capacite ajoutee par bidon */
+const BIDON_MAX = 4;
+
+/* ligne porte-bidons : reperee par un drapeau, jamais par son libelle */
+const ligneBidon = () => (S.blocs.soute || []).find(x => x.bidon);
+function nbBidons(){
+  const l = ligneBidon();
+  return Math.min(BIDON_MAX, Math.max(0, Math.round(num(l ? l.qte : 0))));
+}
+function capaKero(){ return CAPA_KERO + BIDON_KG * nbBidons(); }
+
+function bilanCarburant(){
+  const k = S.carb;
+  const coupure = num(k.coupureNb) * num(k.coupureKg);
+  const nec = necMission();   /* somme des consommations de toutes les branches */
+  const total = num(k.miseRoute) + nec + coupure + num(k.secuPcb) + num(k.secuMini);
+  const capa = capaKero();
+  return {miseRoute:num(k.miseRoute), nec, coupure, secuPcb:num(k.secuPcb),
+          secuMini:num(k.secuMini), total, capa, bidons:nbBidons(),
+          reste:capa - total, depasse:total > capa};
+}
+
+/* ================= rendu : paramètres ================= */
+function dessinerComparaison(box){
+  box.innerHTML = "";
+  const pleins = S.regimes.filter(g => num(g.kt) > 0 && num(g.conso) > 0);
+  if (pleins.length < 2) return;
+  const meilleur = Math.min(...pleins.map(g => num(g.conso)/num(g.kt)));
+  const corps = pleins.map(g=>{
+    const r = num(g.conso)/num(g.kt);
+    return `<tr><td>${esc(g.nom)}</td><td>${fmt(num(g.kt))}</td><td>${fmt(num(g.conso))}</td>` +
+           `<td class="m" style="color:${r===meilleur?"var(--ok)":"inherit"}">${fmt(r,2)}</td></tr>`;
+  }).join("");
+  box.appendChild(el(`<div class="sep"></div><p class="h3">Comparaison</p>`));
+  box.appendChild(el(`<table class="res"><thead><tr><th>Régime</th><th>kt</th><th>kg/h</th><th>kg/NM</th></tr></thead><tbody>${corps}</tbody></table>`));
+}
+
+function dessinerLigneBidons(box){
+  const bc = bilanCarburant();
+  box.innerHTML = "";
+  const dispo = !!ligneBidon();
+  box.appendChild(el(`<div class="cbl large"><span class="lab">Bidons supplémentaires</span>
+    <span class="ro" style="color:${bc.bidons?"var(--ok)":"var(--faint)"}">${
+      !dispo ? "ligne absente" : bc.bidons ? `${bc.bidons} × ${BIDON_KG} = +${fmt(BIDON_KG*bc.bidons)} kg` : "aucun"}</span></div>`));
+  if (!dispo) box.appendChild(el(`<div class="flag">La ligne porte-bidons a été supprimée de la Soute. « Tout effacer » dans Config la rétablit.</div>`));
+}
+
+function dessinerTotalCarb(box){
+  const bc = bilanCarburant(), k = S.carb;
+  box.innerHTML = "";
+  box.appendChild(el(`<div class="ctot">
+    <div class="haut">
+      <span class="l">Total carburant</span>
+      <span class="v" style="color:${bc.depasse?"var(--bad)":"var(--ink)"}">${fmt(bc.total)} kg</span>
+    </div>
+    <div class="jauge">
+      <span class="b"><i style="width:${Math.min(100, bc.capa ? bc.total/bc.capa*100 : 0)}%;background:${bc.depasse?"var(--bad)":"hsl(28 55% 55%)"}"></i></span>
+      <span class="max">${fmt(bc.capa)} kg</span>
+    </div>
+  </div>`));
+  if (bc.coupure) box.appendChild(el(`<div class="flag">Coupure : ${fmt(num(k.coupureNb))} × ${fmt(num(k.coupureKg))} = ${fmt(bc.coupure)} kg</div>`));
+}
+
+/* recalcule tout ce qui dépend des régimes, sans toucher aux champs de saisie */
+function majDerive(){
+  S.regimes.forEach((g,i)=>{
+    const der = document.querySelectorAll("#v-param details .derive")[i];
+    if (!der) return;
+    const kt = num(g.kt), c = num(g.conso);
+    der.innerHTML = (kt > 0 && c > 0)
+      ? `Soit <b>${fmt(c/kt,2)} kg</b> par nautique, ou <b>${fmt(kt/c*100,1)} NM</b> pour 100 kg.`
+      : `<span style="color:var(--faint)">Renseignez la vitesse et la consommation.</span>`;
+  });
+  const cmp = document.getElementById("cmpBox"); if (cmp) dessinerComparaison(cmp);
+  const nec = document.getElementById("necVal"); if (nec) nec.textContent = fmt(necMission()) + " kg";
+  const ct = document.getElementById("carbTot"); if (ct) dessinerTotalCarb(ct);
+}
+
+function rendreParam(){
+  const v = document.getElementById("v-param");
+  v.innerHTML = "";
+
+  S.regimes.forEach((g,i)=>{
+    const h = 215;   /* gris clair commun a tous les regimes */
+    const d = el(`<details class="bloc gris" style="--h:${h}" ${S.ouverts["reg"+i]!==false?"open":""} data-k="reg${i}">
+      <summary><span class="chev"></span>
+        <input class="blocname" data-f="r${i}-nom" type="text" value="${esc(g.nom)}" aria-label="Nom du régime">
+      </summary>
+      <div class="body">
+        <div class="reg">
+          <label class="f"><span>Vitesse</span>
+            <span class="unf" data-u="kt"><input data-f="r${i}-kt" type="number" inputmode="decimal" placeholder="0" value="${esc(g.kt)}"></span></label>
+          <label class="f"><span>Consommation</span>
+            <span class="unf" data-u="kg/h"><input data-f="r${i}-conso" type="number" inputmode="decimal" placeholder="0" value="${esc(g.conso)}"></span></label>
+        </div>
+        <div class="derive"></div>
+      </div></details>`);
+    const ins = d.querySelectorAll(".reg input");
+    ins[0].oninput = e => { g.kt = e.target.value; majDerive(); sauverEtat(); };
+    ins[1].oninput = e => { g.conso = e.target.value; majDerive(); sauverEtat(); };
+    const bn = d.querySelector(".blocname");
+    bn.onclick = e => e.preventDefault();
+    bn.onkeydown = e => e.stopPropagation();
+    bn.oninput = e => { g.nom = e.target.value; sauverEtat(); };
+    d.addEventListener("toggle", ()=>{ S.ouverts["reg"+i] = d.open; sauverEtat(); });
+    const kt = num(g.kt), c = num(g.conso), der = d.querySelector(".derive");
+    if (kt > 0 && c > 0)
+      der.innerHTML = `Soit <b>${fmt(c/kt,2)} kg</b> par nautique, ou <b>${fmt(kt/c*100,1)} NM</b> pour 100 kg.`;
+    else
+      der.innerHTML = `<span style="color:var(--faint)">Renseignez la vitesse et la consommation.</span>`;
+    v.appendChild(d);
+  });
+
+  const cmp = el(`<div id="cmpBox"></div>`); v.appendChild(cmp);
+  dessinerComparaison(cmp);
+
+  /* ---- carburant ---- */
+  const k = S.carb, bc = bilanCarburant();
+  const d = el(`<div class="bloc" style="--h:28;margin-top:16px">
+    <div style="padding:11px 13px;background:hsl(28 34% 17%);display:flex;align-items:center;gap:10px">
+      <h2>Carburant</h2>
+      <span class="btot" style="margin-left:auto">${fmt(bc.total)} kg</span></div>
+    <div class="body">
+      <div class="cbl"><span class="lab">Mise en route</span>
+        <span class="unf" data-u="kg"><input data-c="miseRoute" data-f="c-mr" type="number" inputmode="decimal" placeholder="0" value="${esc(k.miseRoute)}"></span></div>
+      <div class="cbl"><span class="lab">NEC mission<small>calculé dans l'onglet Mission</small></span>
+        <span class="ro" id="necVal">${fmt(bc.nec)} kg</span></div>
+      <div class="cbl large"><span class="lab">Coupure<small>nombre × kg</small></span>
+        <span class="duo">
+          <input data-c="coupureNb" data-f="c-cn" type="number" inputmode="numeric" placeholder="0" value="${esc(k.coupureNb)}">
+          <span class="x">×</span>
+          <span class="unf" data-u="kg"><input data-c="coupureKg" data-f="c-ck" type="number" inputmode="decimal" placeholder="0" value="${esc(k.coupureKg)}"></span>
+        </span></div>
+      <div class="cbl"><span class="lab">Sécu PCB</span>
+        <span class="unf" data-u="kg"><input data-c="secuPcb" data-f="c-pcb" type="number" inputmode="decimal" placeholder="0" value="${esc(k.secuPcb)}"></span></div>
+      <div class="cbl"><span class="lab">Sécu mini</span>
+        <span class="unf" data-u="kg"><input data-c="secuMini" data-f="c-mini" type="number" inputmode="decimal" placeholder="0" value="${esc(k.secuMini)}"></span></div>
+      <div id="bidonLigne"></div>
+      <div id="carbTot"></div>
+    </div></div>`);
+  d.querySelectorAll("[data-c]").forEach(inp=>{
+    inp.oninput = e => { S.carb[inp.dataset.c] = e.target.value;
+      dessinerTotalCarb(d.querySelector("#carbTot")); sauverEtat(); };
+  });
+  v.appendChild(d);
+  dessinerLigneBidons(d.querySelector("#bidonLigne"));
+  dessinerTotalCarb(d.querySelector("#carbTot"));
+}
+
+/* ================= totaux ================= */
+function majTotaux(){
+  document.getElementById("total").textContent = fmt(masseEquipee());
+  const parts = [`vide ${fmt(num(S.mve))}`, `équipements ${fmt(totalMachine())}`, `charge ${fmt(totalCharge())}`];
+  document.getElementById("detail").textContent = parts.join("  +  ") + "  kg";
+  document.querySelectorAll("#v-config details").forEach(d=>{
+    const k = d.dataset.k, t = d.querySelector(".btot");
+    if (k === "machine"){ t.textContent = fmt(num(S.mve)+totalMachine()) + " kg"; }
+    else if (t) t.textContent = fmt(totalBloc(k)) + " kg";
+  });
+  document.querySelectorAll("#v-perfo details").forEach((_,i)=> majPerfo(i));
+}
+
+/* ================= navigation ================= */
+function onglet(nom){
+  for (const k of ["config","perfo","miss","param"]){
+    document.getElementById("t-"+k).setAttribute("aria-selected", String(k===nom));
+    document.getElementById("v-"+k).hidden = (k!==nom);
+  }
+  document.getElementById("totlabel").textContent =
+    nom==="config" ? "Masse équipée" : "Masse équipée (onglet Config)";
+  if (nom === "param") rendreParam();
+  if (nom === "miss") rendreMission();
+  document.querySelector("main").scrollTop = 0;
+}
+
+/* ================= démarrage ================= */
+document.getElementById("ver").textContent = "v" + VERSION;
+S = fusionner(lire(K_ETAT, null));
+rendreConfig(); rendrePerfo(); majTotaux();
+document.getElementById("t-config").onclick = () => onglet("config");
+document.getElementById("t-perfo").onclick  = () => onglet("perfo");
+document.getElementById("t-miss").onclick   = () => onglet("miss");
+document.getElementById("t-param").onclick  = () => onglet("param");
+
+if ("serviceWorker" in navigator)
+  window.addEventListener("load", ()=> navigator.serviceWorker.register("sw.js").catch(()=>{}));
+</script>
+</body>
+</html>
