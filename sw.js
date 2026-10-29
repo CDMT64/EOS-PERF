@@ -1,9 +1,14 @@
-/* EOS - service worker. Monter CACHE d'un cran a chaque mise en ligne. */
-const CACHE = "perfs-v1.12.0";
-const FICHIERS = ["./", "./index.html", "./manifest.json", "./icon-192.png", "./icon-512.png", "./icon-maskable.png"];
+/* PERFS - service worker.
+   A chaque mise en ligne, monter CACHE d'un cran : c'est ce changement
+   d'octets qui declenche l'installation de la nouvelle version. */
+const CACHE = "perfs-v1.13.0";
+const FICHIERS = ["./", "./index.html", "./manifest.json",
+                  "./icon-192.png", "./icon-512.png", "./icon-maskable.png"];
 
 self.addEventListener("install", e => {
-  e.waitUntil(caches.open(CACHE).then(c => c.addAll(FICHIERS)).then(() => self.skipWaiting()));
+  /* pas de skipWaiting ici : la nouvelle version attend que la page
+     la laisse prendre la main, pour ne pas recharger sous les doigts */
+  e.waitUntil(caches.open(CACHE).then(c => c.addAll(FICHIERS)));
 });
 
 self.addEventListener("activate", e => {
@@ -14,8 +19,13 @@ self.addEventListener("activate", e => {
   );
 });
 
-/* Reseau d'abord pour la page (pour recevoir les mises a jour),
-   cache d'abord pour le reste. Hors reseau, tout vient du cache. */
+/* la page demande la main quand l'equipage touche la banniere */
+self.addEventListener("message", e => {
+  if (e.data === "prendre-la-main") self.skipWaiting();
+});
+
+/* Reseau d'abord pour la page, cache d'abord pour le reste.
+   Hors reseau, tout vient du cache. */
 self.addEventListener("fetch", e => {
   const req = e.request;
   if (req.method !== "GET" || new URL(req.url).origin !== location.origin) return;
